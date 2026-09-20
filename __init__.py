@@ -7,13 +7,8 @@ Any pipeline in this project exposes these 3 core functions:
 3. clear(session_id) -> dict
 """
 
-try:
-    from .ingestion import ingest_documents as ingest, extract_text_from_bytes
-    from .chat import ask_question as ask
-    from .retrieval import clear_session as clear
-except ImportError:
-    from ingestion import ingest_documents as ingest, extract_text_from_bytes
-    from chat import ask_question as ask
-    from retrieval import clear_session as clear
+from ingestion import ingest_documents as ingest, extract_text_from_bytes
+from chat import ask_question as ask
+from retrieval import clear_session as clear
 
 __all__ = ["ingest", "ask", "clear", "extract_text_from_bytes"]

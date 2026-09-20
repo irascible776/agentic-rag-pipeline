@@ -10,10 +10,7 @@ if str(root_dir) not in sys.path:
     sys.path.insert(0, str(root_dir))
 
 import config
-try:
-    from .retrieval import retrieve_docs, format_docs, get_prompt_template, get_llm
-except ImportError:
-    from retrieval import retrieve_docs, format_docs, get_prompt_template, get_llm
+from retrieval import retrieve_docs, format_docs, get_prompt_template, get_llm
 
 
 def ask_question(question: str, history: List[Dict[str, str]] | None = None, session_id: str = "global") -> Dict[str, Any]:
