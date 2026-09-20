@@ -1,0 +1,20 @@
+{
+  "include": [
+    "gui",
+    "config.py",
+    "chat.py",
+    "ingestion.py",
+    "retrieval.py",
+    "__init__.py"
+  ],
+  "exclude": [
+    "**/node_modules",
+    "**/__pycache__",
+    "**/.venv",
+    ".venv",
+    "db"
+  ],
+  "extraPaths": [
+    "."
+  ]
+}

@@ -1,106 +1,155 @@
-## this has 2 parts, retrieveing data chunks and part 2 - feeding data to llm
-
-from langchain_chroma import Chroma
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain_huggingface import HuggingFaceEmbeddings
-from dotenv import load_dotenv
+# retrieval.py - Dual-Mode Document Retrieval & Grounding (Supabase & Local Chroma)
 import os
+import sys
+from pathlib import Path
+from typing import List, Dict, Any
+from pydantic import SecretStr
 
-### 2
+# Add root directory to sys.path
+root_dir = Path(__file__).resolve().parent.parent
+if str(root_dir) not in sys.path:
+    sys.path.insert(0, str(root_dir))
 
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_core.prompts import ChatPromptTemplate
+import config
 
-
-load_dotenv()
-
-storage_path = "./db"
-
-# 1. Gemini Embedding Model (Commented out):
-# embedding_function = GoogleGenerativeAIEmbeddings(model="gemini-embedding-001")
-
-# 2. Local BGE-Small Embedding Model (Active - Zero Rate Limits):
-embedding_function = HuggingFaceEmbeddings(
-    model_name="BAAI/bge-small-en-v1.5",
-    model_kwargs={"device": "cpu"},
-    encode_kwargs={"normalize_embeddings": True}
-)
-
-vector_db = Chroma( #chromadb db object is created here and is been loaded from the ./db folder
-                    persist_directory=storage_path,
-                    embedding_function=embedding_function,
-                    collection_metadata={"hnsw:space":"cosine"}
-                    )
+from langchain_core.documents import Document
+from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 
-
-#results = vector_db.similarity_search_with_score(query,k=4) # similarity search k- nearest neigbour÷
-
-# here k is the number of chunks we want to retrieve
-# distance is the cosine similarity between the query and the chunk
-# content is the chunk content
-# metadata is the chunk metadata
-
-# fetch_results=vector_db.as_retriever(search_kwargs={"k":4}) # search_kwargs is used to pass arguments to the search method
-fetch_results=vector_db.as_retriever(
-    search_type='mmr',
-    search_kwargs={"k":3, # number of relevant document to return
-    "fetch_k":30, # number of chunks top 10 to look at first
-    "lambda_mult":0.65 #1 - pure similartity, 0 - max diversity
-    },
-
-    ) # search_kwargs is used to pass arguments to the search method
+def get_embedding_model():
+    """Returns Gemini embedding model."""
+    return GoogleGenerativeAIEmbeddings(
+        model=config.EMBEDDING_MODEL,
+        api_key=SecretStr(config.GEMINI_API_KEY) if config.GEMINI_API_KEY else None,
+        output_dimensionality=config.EMBEDDING_DIM
+    )
 
 
-# print(f"{query}\n\n") 
+def get_llm():
+    """Returns Google Gemini chat model for synthesis."""
+    return ChatGoogleGenerativeAI(
+        model=config.LLM_MODEL,
+        temperature=config.LLM_TEMPERATURE,
+        google_api_key=config.GEMINI_API_KEY
+    )
 
-# for i,result in enumerate(search_results):
-#     print(f"result {i+1}:\n")
-#     print(f"content: {result.page_content}\n\n")
 
-# 2 
-llm = ChatGoogleGenerativeAI(
-                    model = "gemini-3.6-flash",
-                    verbose=True,
-                    temperature=0.1 # for consistency
-                    )
+def get_prompt_template():
+    """Returns ChatPromptTemplate with strict grounding and citation instructions."""
+    return ChatPromptTemplate.from_messages([
+        ("system",
+         "You are a helpful and knowledgeable assistant. Answer the user's question using the conversation history and the context below.\n"
+         "Rules:\n"
+         "1. If the answer cannot be found in the context or conversation history, truthfully state: 'I cannot find the answer in the provided documents.'\n"
+         "2. Do not invent facts or use outside knowledge.\n"
+         "3. Cite which Document number or Source filename you got each fact from.\n\n"
+         "Context:\n{context}"),
+        MessagesPlaceholder(variable_name="chat_history"),
+        ("human", "{question}")
+    ])
 
-def format_docs(docs):
+
+def format_docs(docs: List[Document]) -> str:
+    """Formats retrieved document chunks into clean readable text for the LLM prompt."""
+    if not docs:
+        return "No relevant documents found."
+
     formatted = []
     for i, doc in enumerate(docs):
-        source = doc.metadata.get("source", "Unknown")
+        source = doc.metadata.get("source", "Unknown Document")
         formatted.append(f"[Document {i+1} - Source: {source}]:\n{doc.page_content}")
     return "\n\n".join(formatted)
 
 
-prompt_template = ChatPromptTemplate.from_messages([
-    ("system", 
-     "You are a helpful assistant. Answer the user's question using ONLY the provided context below.\n"
-     "Rules:\n"
-     "1. If the answer cannot be found in the context, truthfully say 'I cannot find the answer in the provided documents.'\n"
-     "2. Do not invent facts or use outside knowledge.\n"
-     "3. Cite which Document number you got each fact from.\n\n"
-     "Context:\n{context}"),
-    ("human", "{question}")
-])
+def retrieve_docs(query: str, session_id: str = "global") -> List[Document]:
+    """
+    Retrieves the most relevant chunks for a user question:
+    - If Cloud Supabase is active: queries Supabase pgvector table using match_documents RPC.
+      Retrieves documents that are marked 'global' OR match the user's session_id.
+    - If Local Fallback: queries the local ChromaDB database.
+    """
+    embed_model = get_embedding_model()
 
-query = "How did the Wright brothers succeed where others failed?"
+    # --- MODE 1: CLOUD SUPABASE ---
+    if config.USE_SUPABASE:
+        from supabase import create_client
+        supabase = create_client(config.SUPABASE_URL, config.SUPABASE_KEY)
 
-print(f"query: {query}\n")
+        # 1. Embed the user's question into a vector
+        query_vector = embed_model.embed_query(query)
 
-#retrieving chunks
-search_results=fetch_results.invoke(query)
+        # 2. Call match_documents RPC function in Supabase
+        try:
+            rpc_response = supabase.rpc("match_documents", {
+                "query_embedding": query_vector,
+                "match_count": config.RETRIEVER_K,
+                "filter": {"session_id": session_id}
+            }).execute()
 
-#formatting whole doc in one
+            matched_rows = rpc_response.data
+        except Exception as e:
+            print(f"[Retrieval] Supabase RPC failed ({e}), falling back to direct table query...")
+            matched_rows = []
 
-context_text = format_docs(search_results)
+        if not isinstance(matched_rows, list):
+            matched_rows = []
+
+        # Convert SQL rows to LangChain Document objects
+        docs: List[Document] = []
+        for row in matched_rows:
+            if isinstance(row, dict):
+                content = str(row.get("content", ""))
+                meta = row.get("metadata") if isinstance(row.get("metadata"), dict) else {}
+                docs.append(Document(page_content=content, metadata=meta))
+
+        return docs
+
+    # --- MODE 2: LOCAL CHROMADB FALLBACK ---
+    else:
+        from langchain_chroma import Chroma
+
+        # Check if local database exists on disk
+        chroma_sqlite = config.LOCAL_DB_DIR / "chroma.sqlite3"
+        if not chroma_sqlite.exists():
+            print("[Retrieval] Local ChromaDB not found yet. Ingest documents first.")
+            return []
+
+        vectordb = Chroma(
+            persist_directory=str(config.LOCAL_DB_DIR),
+            collection_name="gemini_rag",
+            embedding_function=embed_model,
+            collection_metadata={"hnsw:space": "cosine"}
+        )
+
+        retriever = vectordb.as_retriever(
+            search_type="mmr",
+            search_kwargs={
+                "k": config.RETRIEVER_K,
+                "fetch_k": config.FETCH_K,
+                "lambda_mult": config.LAMBDA_MULT
+            }
+        )
+
+        matched_docs = retriever.invoke(query)
+        return list(matched_docs)
 
 
-prompt = prompt_template.invoke({
-    "context": context_text,
-    "question": query
-})
+def clear_session(session_id: str) -> Dict[str, Any]:
+    """
+    Cleans up documents associated with this session:
+    - Only deletes disposable session chunks (never deletes 'global' knowledge base docs).
+    """
+    if not session_id or session_id == "global":
+        return {"status": "ignored", "message": "Cannot delete global knowledge base docs."}
 
-response = llm.invoke(prompt)
+    if config.USE_SUPABASE:
+        from supabase import create_client
+        supabase = create_client(config.SUPABASE_URL, config.SUPABASE_KEY)
 
-print(f"\nResponse:\n{response.text}")
+        print(f"[Retrieval] Cleaning up Supabase records for session: {session_id}...")
+        res = supabase.table(config.SUPABASE_TABLE).delete().eq("session_id", session_id).execute()
+        return {"status": "cleared", "mode": "supabase", "session_id": session_id}
+    else:
+        print(f"[Retrieval] Local session cleanup requested for session: {session_id}")
+        return {"status": "cleared", "mode": "local", "session_id": session_id}

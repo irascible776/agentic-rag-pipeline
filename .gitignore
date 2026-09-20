@@ -1,25 +1,40 @@
-# Environment variables & secrets
+# Environment variables and credentials
 .env
 *.env
+.env.*
+!.env.example
 
-# Python Virtual Environment
+# Python virtual environments
 .venv/
 venv/
 ENV/
 env/
+env.bak/
+venv.bak/
 
-# Vector database storage
+# Vector database storage & sqlite files
 db/
+*.sqlite
+*.sqlite3
+chroma.sqlite3
 
-# Python cache & bytecode
+# Python bytecode and caches
 __pycache__/
 *.py[cod]
 *$py.class
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
-# Operating System files
+# IDE, editors and OS metadata
 .DS_Store
 Thumbs.db
-
-# IDE & Editor settings
 .vscode/
 .idea/
+*.swp
+*~
+
+# Logs and runtime dumps
+*.log
+scratch/
