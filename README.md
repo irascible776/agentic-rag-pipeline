@@ -1,3 +1,9 @@
+---
+title: Agentic RAG Pipeline
+sdk: docker
+app_port: 7860
+---
+
 # Agentic RAG Pipeline
 
 A modular, production-ready Retrieval-Augmented Generation (RAG) system built with LangChain, FastAPI, and Google Gemini. It supports multi-format document ingestion (.pdf, .docx, .txt, .md), dual-mode vector storage (Supabase pgvector and local ChromaDB), conversation history awareness, and a clean web interface.
