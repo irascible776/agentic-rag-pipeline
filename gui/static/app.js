@@ -51,17 +51,17 @@ async function checkSystemConfig() {
     statusDot.classList.add("ready");
 
     if (data.mode === "supabase") {
-      statusText.textContent = "🟢 Cloud: Supabase pgvector";
-      chatStatusSubtitle.textContent = "Connected to Supabase Cloud Database";
-      if (statEngine) statEngine.textContent = "Supabase";
+      statusText.textContent = "Cloud Active (pgvector)";
+      chatStatusSubtitle.textContent = "Grounded via Cloud pgvector & Gemini";
+      if (statEngine) statEngine.textContent = "pgvector";
     } else {
-      statusText.textContent = "💻 Local: ChromaDB (fallback)";
-      chatStatusSubtitle.textContent = "Using Local Chroma & docs/ fallback";
-      if (statEngine) statEngine.textContent = "Chroma";
+      statusText.textContent = "Local Engine (ChromaDB)";
+      chatStatusSubtitle.textContent = "Grounded via Local Chroma & Gemini";
+      if (statEngine) statEngine.textContent = "ChromaDB";
     }
   } catch (err) {
     statusDot.classList.remove("ready");
-    statusText.textContent = "⚠️ Server Offline";
+    statusText.textContent = "Server Offline";
     chatStatusSubtitle.textContent = "Cannot connect to backend server";
   }
 }
