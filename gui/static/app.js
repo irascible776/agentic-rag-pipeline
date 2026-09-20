@@ -50,15 +50,9 @@ async function checkSystemConfig() {
 
     statusDot.classList.add("ready");
 
-    if (data.mode === "supabase") {
-      statusText.textContent = "Cloud Active (pgvector)";
-      chatStatusSubtitle.textContent = "Grounded via Cloud pgvector & Gemini";
-      if (statEngine) statEngine.textContent = "pgvector";
-    } else {
-      statusText.textContent = "Local Engine (ChromaDB)";
-      chatStatusSubtitle.textContent = "Grounded via Local Chroma & Gemini";
-      if (statEngine) statEngine.textContent = "ChromaDB";
-    }
+    statusText.textContent = "System Active";
+    chatStatusSubtitle.textContent = "Grounded in indexed documents";
+    if (statEngine) statEngine.textContent = "Connected";
   } catch (err) {
     statusDot.classList.remove("ready");
     statusText.textContent = "Server Offline";
