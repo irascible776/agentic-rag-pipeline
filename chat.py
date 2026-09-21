@@ -13,19 +13,32 @@ import config
 from retrieval import retrieve_docs, format_docs, get_prompt_template, get_llm
 
 
-def ask_question(question: str, history: List[Dict[str, str]] | None = None, session_id: str = "global") -> Dict[str, Any]:
+import time
+
+
+def ask_question(
+    question: str,
+    history: List[Dict[str, str]] | None = None,
+    session_id: str = "global",
+    k: int | None = None,
+    temperature: float | None = None,
+    model: str | None = None
+) -> Dict[str, Any]:
     """
     Answers a question grounded in the retrieved documents:
     1. Searches vector DB (Supabase or local Chroma) for matching chunks.
     2. Formats retrieved chunks with document sources.
     3. Bundles context, conversation history, and question into the prompt.
     4. Invokes Gemini to generate an answer.
-    5. Returns dict with 'answer' and unique 'sources'.
+    5. Returns dict with 'answer', unique 'sources', and live 'telemetry' latency.
     """
     active_history = history or []
 
-    # 1. Retrieve relevant chunks
-    matched_docs = retrieve_docs(question, session_id=session_id)
+    # 1. Retrieve relevant chunks & track retrieval latency
+    t_start = time.perf_counter()
+    matched_docs = retrieve_docs(question, session_id=session_id, k=k)
+    t_retrieved = time.perf_counter()
+    retrieval_ms = int((t_retrieved - t_start) * 1000)
 
     # 2. Extract unique source names
     sources: List[str] = []
@@ -55,9 +68,13 @@ def ask_question(question: str, history: List[Dict[str, str]] | None = None, ses
         "question": question
     })
 
-    # 6. Generate answer from Gemini LLM
-    llm = get_llm()
+    # 6. Generate answer from Gemini LLM & track generation latency
+    llm = get_llm(model=model, temperature=temperature)
+    t_gen_start = time.perf_counter()
     response = llm.invoke(prompt)
+    t_gen_end = time.perf_counter()
+    generation_ms = int((t_gen_end - t_gen_start) * 1000)
+    total_ms = int((t_gen_end - t_start) * 1000)
 
     # Extract clean text from LLM response (handles str, list of blocks, or AIMessage)
     if isinstance(response.content, str):
@@ -77,7 +94,15 @@ def ask_question(question: str, history: List[Dict[str, str]] | None = None, ses
 
     return {
         "answer": answer_text,
-        "sources": sources
+        "sources": sources,
+        "telemetry": {
+            "retrieval_ms": retrieval_ms,
+            "generation_ms": generation_ms,
+            "total_ms": total_ms,
+            "chunks_retrieved": len(matched_docs),
+            "model_used": model or config.LLM_MODEL,
+            "k_used": k or config.RETRIEVER_K
+        }
     }
 
 

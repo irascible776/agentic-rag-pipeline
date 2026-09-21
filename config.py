@@ -41,7 +41,7 @@ LOCAL_DOCS_DIR.mkdir(parents=True, exist_ok=True)
 LOCAL_DB_DIR.mkdir(parents=True, exist_ok=True)
 
 # --- 4. LLM & Embedding Settings ---
-LLM_MODEL = "gemini-3.5-flash"
+LLM_MODEL = "gemini-3.6-flash"
 LLM_TEMPERATURE = 0.1
 
 # Gemini embedding model (768 dimensions via output_dimensionality=768, 0 MB server RAM)

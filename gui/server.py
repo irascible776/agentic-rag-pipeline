@@ -44,6 +44,9 @@ class ChatRequest(BaseModel):
     question: str
     history: List[Dict[str, str]] = []
     session_id: str = "global"
+    k: Optional[int] = None
+    temperature: Optional[float] = None
+    model: Optional[str] = None
 
 
 class ClearRequest(BaseModel):
@@ -58,7 +61,12 @@ def get_system_config():
         "mode": "supabase" if config.USE_SUPABASE else "local",
         "supabase_configured": config.USE_SUPABASE,
         "table": config.SUPABASE_TABLE if config.USE_SUPABASE else "local_chroma",
-        "embedding_model": config.EMBEDDING_MODEL
+        "embedding_model": config.EMBEDDING_MODEL,
+        "llm_model": config.LLM_MODEL,
+        "chunk_size": config.CHUNK_SIZE,
+        "chunk_overlap": config.CHUNK_OVERLAP,
+        "retriever_k": config.RETRIEVER_K,
+        "temperature": config.LLM_TEMPERATURE
     }
 
 
@@ -66,7 +74,9 @@ def get_system_config():
 async def upload_and_chunk(
     files: List[UploadFile] = File(...),
     session_id: str = Form("global"),
-    is_permanent: bool = Form(False)
+    is_permanent: bool = Form(False),
+    chunk_size: Optional[int] = Form(None),
+    chunk_overlap: Optional[int] = Form(None)
 ):
     """
     Receives uploaded documents (.pdf, .docx, .txt, .md), extracts text into memory,
@@ -95,8 +105,14 @@ async def upload_and_chunk(
     if not file_tuples:
         raise HTTPException(status_code=400, detail="No valid non-empty documents found (.pdf, .docx, .txt, .md).")
 
-    # call the clean pipeline contract
-    result = ingest(file_tuples, session_id=session_id, is_permanent=is_permanent)
+    # call the clean pipeline contract with optional dynamic chunk settings
+    result = ingest(
+        file_tuples,
+        session_id=session_id,
+        is_permanent=is_permanent,
+        chunk_size=chunk_size,
+        chunk_overlap=chunk_overlap
+    )
     return result
 
 
@@ -113,7 +129,10 @@ def chat_endpoint(req: ChatRequest):
         response = ask(
             question=req.question.strip(),
             history=req.history,
-            session_id=req.session_id
+            session_id=req.session_id,
+            k=req.k,
+            temperature=req.temperature,
+            model=req.model
         )
         return response
     except Exception as e:

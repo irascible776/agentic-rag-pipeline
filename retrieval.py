@@ -26,11 +26,11 @@ def get_embedding_model():
     )
 
 
-def get_llm():
-    """Returns Google Gemini chat model for synthesis."""
+def get_llm(model: str | None = None, temperature: float | None = None):
+    """Returns Google Gemini chat model for synthesis with optional overrides."""
     return ChatGoogleGenerativeAI(
-        model=config.LLM_MODEL,
-        temperature=config.LLM_TEMPERATURE,
+        model=model or config.LLM_MODEL,
+        temperature=temperature if temperature is not None else config.LLM_TEMPERATURE,
         google_api_key=config.GEMINI_API_KEY
     )
 
@@ -62,7 +62,7 @@ def format_docs(docs: List[Document]) -> str:
     return "\n\n".join(formatted)
 
 
-def retrieve_docs(query: str, session_id: str = "global") -> List[Document]:
+def retrieve_docs(query: str, session_id: str = "global", k: int | None = None) -> List[Document]:
     """
     Retrieves the most relevant chunks for a user question:
     - If Cloud Supabase is active: queries Supabase pgvector table using match_documents RPC.
@@ -70,6 +70,7 @@ def retrieve_docs(query: str, session_id: str = "global") -> List[Document]:
     - If Local Fallback: queries the local ChromaDB database.
     """
     embed_model = get_embedding_model()
+    retrieval_k = k if k and k > 0 else config.RETRIEVER_K
 
     # --- MODE 1: CLOUD SUPABASE ---
     if config.USE_SUPABASE:
@@ -83,7 +84,7 @@ def retrieve_docs(query: str, session_id: str = "global") -> List[Document]:
         try:
             rpc_response = supabase.rpc("match_documents", {
                 "query_embedding": query_vector,
-                "match_count": config.RETRIEVER_K,
+                "match_count": retrieval_k,
                 "filter": {"session_id": session_id}
             }).execute()
 
@@ -125,8 +126,8 @@ def retrieve_docs(query: str, session_id: str = "global") -> List[Document]:
         retriever = vectordb.as_retriever(
             search_type="mmr",
             search_kwargs={
-                "k": config.RETRIEVER_K,
-                "fetch_k": config.FETCH_K,
+                "k": retrieval_k,
+                "fetch_k": max(config.FETCH_K, retrieval_k * 4),
                 "lambda_mult": config.LAMBDA_MULT
             }
         )

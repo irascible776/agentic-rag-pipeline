@@ -1,182 +1,274 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- metadata -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NexusRAG Studio | Grounded Multi-Document Intelligence</title>
+  <title>Workbench | Document Intelligence & Grounded QA</title>
 
-  <!-- google inter font -->
+  <!-- Google Fonts: Inter + JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <!-- custom styles -->
+  <!-- Custom Styles -->
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
   <div class="app-container">
     
-    <!-- header bar -->
+    <!-- Top Navigation Header -->
     <header class="top-header">
       <div class="brand">
-        <div class="logo-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+        <div class="logo-mark">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
           </svg>
         </div>
-        <div>
-          <h1>NexusRAG Studio</h1>
-          <p class="subtitle">Document Intelligence & Question Answering</p>
+        <div class="brand-text">
+          <div class="brand-title-row">
+            <h1>Workbench</h1>
+            <span class="version-tag">v1.2</span>
+          </div>
+          <p class="brand-subtitle">Document Intelligence & Retrieval Engine</p>
         </div>
       </div>
-      <div class="header-status">
-        <span class="status-indicator" id="status-dot"></span>
-        <span id="status-text">System Active</span>
+
+      <!-- Header Center: Engine & Session Badges -->
+      <div class="header-badges">
+        <div class="status-pill" id="storage-pill">
+          <span class="status-dot" id="status-dot"></span>
+          <span id="storage-status-text">Detecting Engine...</span>
+        </div>
+        <div class="session-pill" id="session-pill" title="Click to copy Session ID">
+          <span class="session-label">Session:</span>
+          <code id="session-id-display">...</code>
+        </div>
+      </div>
+
+      <!-- Header Actions: Guide & Tuning Drawer Triggers -->
+      <div class="header-actions">
+        <button id="btn-toggle-guide" class="ghost-btn" type="button" title="View Onboarding Tutorial">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          <span>Guide</span>
+        </button>
+
+        <button id="btn-open-tuning" class="action-btn" type="button" title="Open Pipeline Tuning & Diagnostics">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          <span>Tuning</span>
+        </button>
       </div>
     </header>
 
-    <!-- main layout grid -->
+    <!-- Main Workspace Layout -->
     <main class="main-content">
       
-      <!-- left setup sidebar -->
-      <aside class="sidebar-card">
+      <!-- Left Sidebar: Corpus & Ingestion -->
+      <aside class="sidebar-panel">
         
-        <!-- step 1: file upload section -->
-        <div class="panel-section">
-          <div class="section-title">
-            <span class="step-num">1</span>
-            <h2>Upload Documents</h2>
-          </div>
-          <p class="section-desc">Add <code>.pdf</code>, <code>.docx</code>, <code>.txt</code>, or <code>.md</code> files to your knowledge base.</p>
-          
-          <!-- drag and drop zone -->
-          <div class="drop-zone" id="drop-zone">
-            <input type="file" id="file-input" multiple accept=".pdf,.docx,.txt,.md" hidden>
-            <div class="drop-zone-content">
-              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+        <div class="panel-header">
+          <h2>Knowledge Corpus</h2>
+          <span class="badge" id="corpus-status-badge">Ready</span>
+        </div>
+        
+        <!-- Drag & Drop Upload Zone -->
+        <div class="drop-zone" id="drop-zone">
+          <input type="file" id="file-input" multiple accept=".pdf,.docx,.txt,.md" hidden>
+          <div class="drop-zone-content">
+            <div class="drop-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                 <polyline points="17 8 12 3 7 8"></polyline>
                 <line x1="12" y1="3" x2="12" y2="15"></line>
               </svg>
-              <p>Drag & drop <strong>.pdf, .docx, .txt, .md</strong> files here</p>
-              <span>or click to browse files</span>
             </div>
-          </div>
-
-          <!-- permanent vs disposable option -->
-          <div class="perm-option">
-            <label class="checkbox-container">
-              <input type="checkbox" id="chk-permanent">
-              <span>Save permanently in Global Knowledge Base</span>
-            </label>
-            <p class="perm-hint">Unchecked = Temporary session (wiped when you delete uploads).</p>
-          </div>
-
-          <!-- uploaded files list -->
-          <div class="file-list-container">
-            <label class="list-label">Uploaded Files (<span id="file-count">0</span>):</label>
-            <ul class="file-list" id="file-list">
-              <li class="empty-hint">No documents uploaded yet.</li>
-            </ul>
+            <p class="drop-title">Drop documents here</p>
+            <span class="drop-subtitle">PDF, DOCX, TXT, MD • Click to browse</span>
           </div>
         </div>
 
-        <!-- step 2: processing section -->
-        <div class="panel-section">
-          <div class="section-title">
-            <span class="step-num">2</span>
-            <h2>Process & Index</h2>
-          </div>
-          <p class="section-desc">Chunk text and index into vector database.</p>
-          
-          <button id="btn-ingest" class="primary-btn" type="button" disabled>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polygon points="5 3 19 12 5 21 5 3"></polygon>
-            </svg>
-            <span>Continue (Load & Chunk Docs)</span>
-          </button>
+        <!-- Data Retention Toggle (Default Checked) -->
+        <div class="retention-control">
+          <label class="toggle-container" for="chk-permanent">
+            <input type="checkbox" id="chk-permanent" checked>
+            <span class="toggle-switch"></span>
+            <span class="toggle-label">Retain in Knowledge Base</span>
+          </label>
+          <p class="retention-hint">Keep vectors permanently. If off, vectors are isolated and purged upon closing session.</p>
+        </div>
 
-          <!-- progress box -->
-          <div class="progress-box hidden" id="progress-box">
-            <div class="progress-spinner"></div>
+        <!-- Ingestion Progress Stepper (Visible during upload/indexing) -->
+        <div class="progress-card hidden" id="progress-box">
+          <div class="progress-header">
+            <div class="pulsing-indicator"></div>
             <span id="progress-msg">Processing documents...</span>
           </div>
-
-          <!-- summary stats card -->
-          <div class="stats-card hidden" id="stats-card">
-            <div class="stat-item">
-              <span class="stat-val" id="stat-files">0</span>
-              <span class="stat-lbl">Files</span>
+          <div class="stepper-track">
+            <div class="step-item active" id="step-extract">
+              <span class="step-dot"></span>
+              <span class="step-text">Extract</span>
             </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-              <span class="stat-val" id="stat-chunks">0</span>
-              <span class="stat-lbl">Chunks</span>
+            <div class="step-item" id="step-chunk">
+              <span class="step-dot"></span>
+              <span class="step-text">Chunk</span>
             </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-              <span class="stat-val" id="stat-engine">Ready</span>
-              <span class="stat-lbl">Status</span>
+            <div class="step-item" id="step-embed">
+              <span class="step-dot"></span>
+              <span class="step-text">Embed & Index</span>
             </div>
           </div>
         </div>
 
-        <!-- action controls -->
-        <div class="sidebar-footer">
-          <button id="btn-start-chat" class="accent-btn" type="button" disabled>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-            </svg>
-            <span>Start Chat</span>
-          </button>
-          
-          <button id="btn-clear" class="danger-btn" type="button" title="Delete only your uploaded documents for this session">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="3 6 5 6 21 6"></polyline>
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-            </svg>
-            <span>Delete My Uploads</span>
-          </button>
+        <!-- Uploaded Documents File List -->
+        <div class="file-list-section">
+          <div class="file-list-header">
+            <span class="section-label">Indexed Documents (<span id="file-count">0</span>)</span>
+          </div>
+          <ul class="file-list" id="file-list">
+            <li class="empty-file-hint">No documents loaded yet. Drop files above to index automatically.</li>
+          </ul>
+        </div>
+
+        <!-- Live Corpus Stats Card (Shown when indexed) -->
+        <div class="stats-panel hidden" id="stats-card">
+          <div class="stat-cell">
+            <span class="stat-number" id="stat-files">0</span>
+            <span class="stat-tag">Files</span>
+          </div>
+          <div class="stat-separator"></div>
+          <div class="stat-cell">
+            <span class="stat-number" id="stat-chunks">0</span>
+            <span class="stat-tag">Chunks</span>
+          </div>
+          <div class="stat-separator"></div>
+          <div class="stat-cell">
+            <span class="stat-number" id="stat-engine">Chroma</span>
+            <span class="stat-tag">Engine</span>
+          </div>
+        </div>
+
+        <!-- Sidebar Footer Note -->
+        <div class="sidebar-footnote">
+          <span>Files are parsed into embeddings and grounded via strict cosine/MMR retrieval.</span>
         </div>
 
       </aside>
 
-      <!-- right chat container -->
-      <section class="chat-section">
+      <!-- Right Main: Conversation Canvas & Grounded Chat -->
+      <section class="canvas-panel">
         
-        <!-- chat window header -->
-        <div class="chat-header">
-          <div class="chat-header-title">
-            <h3>Knowledge Assistant</h3>
-            <span class="chat-subtitle" id="chat-status-subtitle">Vector DB not loaded</span>
+        <!-- Canvas Top Bar -->
+        <div class="canvas-header">
+          <div class="canvas-info">
+            <h3>Interactive Assistant</h3>
+            <span class="canvas-sub" id="chat-status-subtitle">Awaiting document indexing</span>
           </div>
-          <button id="btn-clear-chat" class="icon-btn" type="button" title="Clear conversation history">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="3 6 5 6 21 6"></polyline>
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-            </svg>
-            <span>Clear Chat</span>
+          <div class="canvas-actions">
+            <button id="btn-clear-chat" class="ghost-btn" type="button" title="Clear message history">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+              <span>Clear History</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Messages Area -->
+        <div class="messages-container" id="messages-container">
+          
+          <!-- Embedded 3-Card Guided Tutorial (Initial / Empty State) -->
+          <div class="guide-wrapper" id="guide-container">
+            <div class="guide-header">
+              <div class="guide-badge">Quick Start Guide</div>
+              <h2>How to use Workbench</h2>
+              <p>Follow these three steps to query and extract grounded insights from your documentation.</p>
+            </div>
+
+            <div class="guide-cards-grid">
+              
+              <!-- Card 1: What to Upload -->
+              <div class="guide-card">
+                <div class="guide-card-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                  </svg>
+                </div>
+                <h3>1. What to Upload</h3>
+                <p>Add <code>.pdf</code>, <code>.docx</code>, <code>.txt</code>, or <code>.md</code> documents. Ideal for technical specs, research papers, legal contracts, and long-form manuals.</p>
+                <div class="guide-tags">
+                  <span class="file-pill">PDF</span>
+                  <span class="file-pill">DOCX</span>
+                  <span class="file-pill">TXT</span>
+                  <span class="file-pill">MD</span>
+                </div>
+              </div>
+
+              <!-- Card 2: Automatic Ingestion -->
+              <div class="guide-card">
+                <div class="guide-card-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                  </svg>
+                </div>
+                <h3>2. Zero-Friction Indexing</h3>
+                <p>Drag files into the sidebar. Text is extracted, parsed into semantic chunks, and vectorized via Gemini Embeddings into your vector database automatically.</p>
+                <div class="guide-stat-hint">
+                  <span>Chunk Size: <strong>1500 chars</strong></span>
+                  <span>Overlap: <strong>150 chars</strong></span>
+                </div>
+              </div>
+
+              <!-- Card 3: Grounded Answers -->
+              <div class="guide-card">
+                <div class="guide-card-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                  </svg>
+                </div>
+                <h3>3. Grounded Synthesis</h3>
+                <p>Chat enables immediately once indexed. Answers are strictly synthesized from retrieved passages with transparent source attribution citations.</p>
+                <div class="guide-status-chip">
+                  <span class="ready-check">✓</span> <span>Zero hallucination constraint</span>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="guide-dismiss-row">
+              <span class="guide-tip">Tip: Drop a document now to dismiss this guide and open the conversation canvas.</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Prompt Suggestions (Active when documents are indexed) -->
+        <div class="prompt-suggestions hidden" id="prompt-suggestions">
+          <span class="suggestion-label">Suggested:</span>
+          <button type="button" class="suggestion-chip" data-prompt="Summarize the key takeaways and core conclusions of the uploaded documents.">
+            Summarize key takeaways
+          </button>
+          <button type="button" class="suggestion-chip" data-prompt="Extract the critical dates, milestones, or numerical metrics mentioned in these files.">
+            Extract metrics & dates
+          </button>
+          <button type="button" class="suggestion-chip" data-prompt="What are the main technical specifications and methodologies outlined?">
+            Outline specifications
           </button>
         </div>
 
-        <!-- message list area -->
-        <div class="messages-container" id="messages-container">
-          
-          <!-- welcome hero -->
-          <div class="empty-state" id="empty-state">
-            <div class="empty-icon">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-              </svg>
-            </div>
-            <h2>Ready to Explore Your Documents</h2>
-            <p>Upload files on the left and click <strong>Continue & Create Vector DB</strong> to begin asking questions.</p>
-          </div>
-
-        </div>
-
-        <!-- chat input bar -->
+        <!-- Chat Input Bar -->
         <div class="chat-input-bar">
           <form id="chat-form" action="javascript:void(0);" onsubmit="return false;">
             <textarea 
@@ -185,24 +277,207 @@
               placeholder="Ask a question about your documents... (Press Enter to send)" 
               disabled
             ></textarea>
-            <button type="button" id="btn-send" class="send-btn" disabled>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <button type="button" id="btn-send" class="send-btn" disabled title="Send Question (Enter)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="22" y1="2" x2="11" y2="13"></line>
                 <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
               </svg>
             </button>
           </form>
           <div class="chat-footer-note">
-            Answers are strictly grounded in your uploaded documents with source attribution citations.
+            <span>Answers are strictly grounded in retrieved vector passages with verified source citations.</span>
           </div>
         </div>
 
       </section>
 
     </main>
+
+    <!-- Slide-over Pipeline Tuning & Diagnostics Drawer -->
+    <div class="drawer-backdrop hidden" id="drawer-backdrop"></div>
+    <aside class="tuning-drawer hidden" id="tuning-drawer">
+      
+      <div class="drawer-header">
+        <div class="drawer-title-group">
+          <div class="drawer-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </div>
+          <div>
+            <h3>Pipeline Tuning & Diagnostics</h3>
+            <p>Configure ingestion parameters and inspect real-time telemetry.</p>
+          </div>
+        </div>
+        <button id="btn-close-drawer" class="icon-close-btn" type="button" title="Close Drawer (Esc)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="drawer-body">
+        
+        <!-- Section 1: Ingestion & Chunking -->
+        <div class="tuning-section">
+          <div class="tuning-section-title">
+            <span>Ingestion & Chunking</span>
+            <span class="tuning-tag">Applied on upload</span>
+          </div>
+
+          <!-- Chunk Size -->
+          <div class="control-group">
+            <div class="control-header">
+              <label for="chunk-size-slider">Chunk Size: <strong id="val-chunk-size">1,500</strong> chars</label>
+              <div class="info-tooltip-wrap">
+                <span class="info-icon" tabindex="0">ⓘ</span>
+                <div class="tooltip-popover">
+                  <strong>Chunk Size (characters)</strong><br>
+                  Controls the length of text split into each searchable vector block. Smaller chunks pinpoint exact facts; larger chunks preserve broader conversational context.
+                </div>
+              </div>
+            </div>
+            <input type="range" id="chunk-size-slider" min="500" max="3000" step="100" value="1500">
+            <div class="range-labels">
+              <span>500 (Precise)</span>
+              <span>1500 (Balanced)</span>
+              <span>3000 (Broad)</span>
+            </div>
+          </div>
+
+          <!-- Chunk Overlap -->
+          <div class="control-group">
+            <div class="control-header">
+              <label for="chunk-overlap-slider">Chunk Overlap: <strong id="val-chunk-overlap">150</strong> chars</label>
+              <div class="info-tooltip-wrap">
+                <span class="info-icon" tabindex="0">ⓘ</span>
+                <div class="tooltip-popover">
+                  <strong>Chunk Overlap (characters)</strong><br>
+                  The number of shared characters between adjacent chunks. Prevents sentences or technical terms from being sliced across a boundary.
+                </div>
+              </div>
+            </div>
+            <input type="range" id="chunk-overlap-slider" min="50" max="500" step="25" value="150">
+            <div class="range-labels">
+              <span>50 chars</span>
+              <span>150 chars</span>
+              <span>500 chars</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Retrieval & Model Synthesis -->
+        <div class="tuning-section">
+          <div class="tuning-section-title">
+            <span>Retrieval & Synthesis</span>
+            <span class="tuning-tag">Applied on query</span>
+          </div>
+
+          <!-- Top-K Retrieval -->
+          <div class="control-group">
+            <div class="control-header">
+              <label for="retriever-k-slider">Top-K Passages: <strong id="val-retriever-k">5</strong> chunks</label>
+              <div class="info-tooltip-wrap">
+                <span class="info-icon" tabindex="0">ⓘ</span>
+                <div class="tooltip-popover">
+                  <strong>Top-K Passages</strong><br>
+                  The number of most relevant chunks passed to Gemini. Higher values provide deeper coverage across multiple pages; lower values reduce generation time.
+                </div>
+              </div>
+            </div>
+            <input type="range" id="retriever-k-slider" min="1" max="10" step="1" value="5">
+            <div class="range-labels">
+              <span>1 chunk</span>
+              <span>5 chunks</span>
+              <span>10 chunks</span>
+            </div>
+          </div>
+
+          <!-- LLM Temperature -->
+          <div class="control-group">
+            <div class="control-header">
+              <label for="temperature-slider">LLM Temperature: <strong id="val-temperature">0.1</strong></label>
+              <div class="info-tooltip-wrap">
+                <span class="info-icon" tabindex="0">ⓘ</span>
+                <div class="tooltip-popover">
+                  <strong>Model Temperature</strong><br>
+                  Controls randomness in the answer. Set near 0.0 for strict, deterministic fact reproduction; set higher (0.4+) for more natural phrasing.
+                </div>
+              </div>
+            </div>
+            <input type="range" id="temperature-slider" min="0.0" max="0.7" step="0.05" value="0.1">
+            <div class="range-labels">
+              <span>0.0 (Strict Factual)</span>
+              <span>0.35</span>
+              <span>0.7 (Expressive)</span>
+            </div>
+          </div>
+
+          <!-- Model Selector -->
+          <div class="control-group">
+            <div class="control-header">
+              <label for="model-select">Active Synthesis Model</label>
+              <div class="info-tooltip-wrap">
+                <span class="info-icon" tabindex="0">ⓘ</span>
+                <div class="tooltip-popover">
+                  <strong>Synthesis LLM</strong><br>
+                  Gemini 3.6 Flash provides low-latency grounded reasoning; Gemini 3.5 Flash provides balanced inference.
+                </div>
+              </div>
+            </div>
+            <select id="model-select" class="tuning-select">
+              <option value="gemini-3.6-flash" selected>Gemini 3.6 Flash (Ultra Fast)</option>
+              <option value="gemini-3.5-flash">Gemini 3.5 Flash (Balanced)</option>
+              <option value="gemini-flash-latest">Gemini Flash (Latest)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Section 3: Live Telemetry & System Diagnostics (Read-Only) -->
+        <div class="tuning-section">
+          <div class="tuning-section-title">
+            <span>Live Telemetry & Diagnostics</span>
+            <span class="tuning-tag">Auto-updating</span>
+          </div>
+
+          <div class="telemetry-grid">
+            <div class="telemetry-cell">
+              <span class="telemetry-label">Storage Backend</span>
+              <span class="telemetry-val" id="telemetry-storage">Local Chroma</span>
+            </div>
+            <div class="telemetry-cell">
+              <span class="telemetry-label">Embedding Vector Space</span>
+              <span class="telemetry-val" id="telemetry-embedding">gemini-embedding-001 (768d)</span>
+            </div>
+            <div class="telemetry-cell">
+              <span class="telemetry-label">Retrieval Latency</span>
+              <span class="telemetry-val highlight" id="telemetry-retrieval-time">-- ms</span>
+            </div>
+            <div class="telemetry-cell">
+              <span class="telemetry-label">Generation Latency</span>
+              <span class="telemetry-val highlight" id="telemetry-generation-time">-- ms</span>
+            </div>
+            <div class="telemetry-cell full-width">
+              <span class="telemetry-label">Total End-to-End Latency</span>
+              <span class="telemetry-val" id="telemetry-total-time">-- ms</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="drawer-footer">
+        <button id="btn-reset-tuning" class="ghost-btn" type="button">Reset to Defaults</button>
+        <button id="btn-save-drawer" class="primary-action-btn" type="button">Done</button>
+      </div>
+
+    </aside>
+
   </div>
 
-  <!-- script logic -->
+  <!-- Client Controller Script -->
   <script src="/static/app.js"></script>
 </body>
 </html>

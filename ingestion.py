@@ -198,12 +198,14 @@ def store_chunks(chunks: List[Document], session_id: str = "global", is_permanen
 def ingest_documents(
     files_or_folder: Union[str, List[Tuple[str, str]], None] = None,
     session_id: str = "global",
-    is_permanent: bool = False
+    is_permanent: bool = False,
+    chunk_size: int | None = None,
+    chunk_overlap: int | None = None
 ) -> Dict[str, Any]:
     """
     Standard ingestion pipeline:
     1. Loads text files (from folder path or memory list of (filename, text))
-    2. Chunks them
+    2. Chunks them (using optional custom chunk_size and chunk_overlap)
     3. Embeds & stores in Supabase or local Chroma
     """
     if files_or_folder is None:
@@ -219,7 +221,7 @@ def ingest_documents(
     if not docs:
         return {"status": "error", "message": "No documents found to ingest.", "chunks_count": 0, "files_count": 0}
 
-    chunks = chunk_docs(docs)
+    chunks = chunk_docs(docs, size=chunk_size, overlap=chunk_overlap)
     result = store_chunks(chunks, session_id=session_id, is_permanent=is_permanent)
 
     return {
