@@ -29,9 +29,10 @@
         <div class="brand-text">
           <div class="brand-title-row">
             <h1>Workbench</h1>
-            <span class="version-tag">v1.2</span>
+            <span class="version-tag">v3.0 Hybrid & Re-Rank</span>
           </div>
-          <p class="brand-subtitle">Document Intelligence & Retrieval Engine</p>
+          <p class="brand-subtitle">Multi-Modal • BM25 & Vector Hybrid • Two-Stage Re-Ranking</p>
+
         </div>
       </div>
 
@@ -206,42 +207,42 @@
                     <polyline points="10 9 9 9 8 9"></polyline>
                   </svg>
                 </div>
-                <h3>1. What to Upload</h3>
-                <p>Add <code>.pdf</code>, <code>.docx</code>, <code>.txt</code>, or <code>.md</code> documents. Ideal for technical specs, research papers, legal contracts, and long-form manuals.</p>
+                <h3>1. Multi-Modal Documents</h3>
+                <p>Upload <code>.pdf</code>, <code>.docx</code>, <code>.txt</code>, or <code>.md</code>. Automatically extracts text, tabular matrices, and embedded diagrams with Gemini Vision.</p>
                 <div class="guide-tags">
                   <span class="file-pill">PDF</span>
                   <span class="file-pill">DOCX</span>
-                  <span class="file-pill">TXT</span>
-                  <span class="file-pill">MD</span>
+                  <span class="file-pill">Tables</span>
+                  <span class="file-pill">Diagrams</span>
                 </div>
               </div>
 
-              <!-- Card 2: Automatic Ingestion -->
+              <!-- Card 2: Automatic Ingestion & Hybrid Search -->
               <div class="guide-card">
                 <div class="guide-card-icon">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
                   </svg>
                 </div>
-                <h3>2. Zero-Friction Indexing</h3>
-                <p>Drag files into the sidebar. Text is extracted, parsed into semantic chunks, and vectorized via Gemini Embeddings into your vector database automatically.</p>
+                <h3>2. Small-to-Big & Hybrid RRF</h3>
+                <p>Dense vector embeddings + Sparse BM25 keyword matching fused via Reciprocal Rank Fusion, linked to parent sections for deep context.</p>
                 <div class="guide-stat-hint">
-                  <span>Chunk Size: <strong>1500 chars</strong></span>
-                  <span>Overlap: <strong>150 chars</strong></span>
+                  <span>Hybrid: <strong>Vector + BM25</strong></span>
+                  <span>Context: <strong>Parent (1200c)</strong></span>
                 </div>
               </div>
 
-              <!-- Card 3: Grounded Answers -->
+              <!-- Card 3: Grounded Answers & Re-Ranking -->
               <div class="guide-card">
                 <div class="guide-card-icon">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
                   </svg>
                 </div>
-                <h3>3. Grounded Synthesis</h3>
-                <p>Chat enables immediately once indexed. Answers are strictly synthesized from retrieved passages with transparent source attribution citations.</p>
+                <h3>3. Re-Ranked Grounding</h3>
+                <p>FlashRank CPU cross-encoder pinpoints top passages. Embedded figures cited by the assistant appear below answers with modal zoom.</p>
                 <div class="guide-status-chip">
-                  <span class="ready-check">✓</span> <span>Zero hallucination constraint</span>
+                  <span class="ready-check">✓</span> <span>FlashRank Re-Ranking & Citations</span>
                 </div>
               </div>
 
@@ -433,6 +434,42 @@
               <option value="gemini-flash-latest">Gemini Flash (Latest)</option>
             </select>
           </div>
+
+          <!-- Hybrid Search Toggle -->
+          <div class="control-group">
+            <div class="control-header">
+              <label class="toggle-container" for="chk-hybrid">
+                <input type="checkbox" id="chk-hybrid" checked>
+                <span class="toggle-switch"></span>
+                <span class="toggle-label">Hybrid Search (BM25 + RRF)</span>
+              </label>
+              <div class="info-tooltip-wrap">
+                <span class="info-icon" tabindex="0">ⓘ</span>
+                <div class="tooltip-popover">
+                  <strong>Hybrid Search</strong><br>
+                  Fuses semantic vector embeddings with BM25 exact keyword matches via Reciprocal Rank Fusion.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FlashRank Re-Ranking Toggle -->
+          <div class="control-group">
+            <div class="control-header">
+              <label class="toggle-container" for="chk-reranker">
+                <input type="checkbox" id="chk-reranker" checked>
+                <span class="toggle-switch"></span>
+                <span class="toggle-label">FlashRank Re-Ranking</span>
+              </label>
+              <div class="info-tooltip-wrap">
+                <span class="info-icon" tabindex="0">ⓘ</span>
+                <div class="tooltip-popover">
+                  <strong>Two-Stage Cross-Encoder</strong><br>
+                  Re-evaluates pooled candidates with CPU-accelerated ms-marco-TinyBERT ONNX cross-encoder.
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Section 3: Live Telemetry & System Diagnostics (Read-Only) -->
@@ -448,8 +485,24 @@
               <span class="telemetry-val" id="telemetry-storage">Local Chroma</span>
             </div>
             <div class="telemetry-cell">
-              <span class="telemetry-label">Embedding Vector Space</span>
-              <span class="telemetry-val" id="telemetry-embedding">gemini-embedding-001 (768d)</span>
+              <span class="telemetry-label">Vector Space</span>
+              <span class="telemetry-val" id="telemetry-embedding">gemini-embedding-001</span>
+            </div>
+            <div class="telemetry-cell">
+              <span class="telemetry-label">Dense Vector Search</span>
+              <span class="telemetry-val" id="telemetry-dense-time">-- ms</span>
+            </div>
+            <div class="telemetry-cell">
+              <span class="telemetry-label">BM25 Keyword Search</span>
+              <span class="telemetry-val" id="telemetry-bm25-time">-- ms</span>
+            </div>
+            <div class="telemetry-cell">
+              <span class="telemetry-label">FlashRank Re-ranking</span>
+              <span class="telemetry-val highlight" id="telemetry-rerank-time">-- ms</span>
+            </div>
+            <div class="telemetry-cell">
+              <span class="telemetry-label">Candidates Filtered</span>
+              <span class="telemetry-val" id="telemetry-candidates">--</span>
             </div>
             <div class="telemetry-cell">
               <span class="telemetry-label">Retrieval Latency</span>

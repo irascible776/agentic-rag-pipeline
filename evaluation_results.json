@@ -1,0 +1,77 @@
+{
+  "dataset": {
+    "num_test_queries": 30,
+    "flat_corpus_chunks": 140,
+    "hierarchical_corpus_chunks": 163,
+    "num_documents": 6
+  },
+  "retrieval_quality": {
+    "flat_dense_1500c": {
+      "hit_rate_at_3": 1.0,
+      "hit_rate_at_5": 1.0,
+      "precision_at_3": 0.47777777777777786,
+      "precision_at_5": 0.2933333333333332,
+      "mrr": 1.0
+    },
+    "hierarchical_dense_300c": {
+      "hit_rate_at_3": 1.0,
+      "hit_rate_at_5": 1.0,
+      "precision_at_3": 0.9,
+      "precision_at_5": 0.7799999999999999,
+      "mrr": 1.0
+    },
+    "hybrid_bm25_rrf": {
+      "hit_rate_at_3": 1.0,
+      "hit_rate_at_5": 1.0,
+      "precision_at_3": 0.788888888888889,
+      "precision_at_5": 0.6733333333333335,
+      "mrr": 1.0
+    },
+    "hybrid_reranked_flashrank": {
+      "hit_rate_at_3": 1.0,
+      "hit_rate_at_5": 1.0,
+      "precision_at_3": 0.8333333333333335,
+      "precision_at_5": 0.68,
+      "mrr": 1.0
+    }
+  },
+  "latencies": {
+    "dense_search_ms": {
+      "mean": 515.3273907669549,
+      "p50": 508.3329439985391,
+      "p95": 567.8076174517628
+    },
+    "bm25_search_ms": {
+      "mean": 1.6966385000462954,
+      "p50": 1.1781124994740821,
+      "p95": 3.8492603496706566
+    },
+    "rrf_fusion_ms": {
+      "mean": 0.20259496692839699,
+      "p50": 0.14380100037669763,
+      "p95": 0.5418027489213273
+    },
+    "flashrank_rerank_ms": {
+      "mean": 108.12495270001818,
+      "p50": 87.65439149647136,
+      "p95": 147.59229534975017
+    },
+    "total_retrieval_ms": {
+      "mean": 625.3515769339477,
+      "p50": 608.9701925011468,
+      "p95": 718.9112963529622
+    },
+    "gemini_generation_ms": {
+      "mean": 6763.222222222223,
+      "p50": 3990.0,
+      "p95": 15542.2,
+      "sample_count": 9,
+      "quota_note": "Measured across queries 1-9; project hit Free Tier daily quota limit of 20 requests/day for gemini-3.6-flash"
+    },
+    "total_end_to_end_ms": {
+      "mean": 7366.222222222223,
+      "p50": 4554.0,
+      "p95": 16118.4
+    }
+  }
+}

@@ -47,6 +47,8 @@ class ChatRequest(BaseModel):
     k: Optional[int] = None
     temperature: Optional[float] = None
     model: Optional[str] = None
+    enable_hybrid: Optional[bool] = None
+    enable_reranker: Optional[bool] = None
 
 
 class ClearRequest(BaseModel):
@@ -66,7 +68,10 @@ def get_system_config():
         "chunk_size": config.CHUNK_SIZE,
         "chunk_overlap": config.CHUNK_OVERLAP,
         "retriever_k": config.RETRIEVER_K,
-        "temperature": config.LLM_TEMPERATURE
+        "temperature": config.LLM_TEMPERATURE,
+        "enable_hybrid_search": config.ENABLE_HYBRID_SEARCH,
+        "enable_reranker": config.ENABLE_RERANKER,
+        "reranker_model": config.RERANKER_MODEL
     }
 
 
@@ -87,25 +92,23 @@ async def upload_and_chunk(
 
     # allowed file extensions
     allowed_exts = (".pdf", ".docx", ".txt", ".md")
-    file_tuples: List[Tuple[str, str]] = []
+    file_tuples: List[Tuple[str, Any]] = []
 
     for f in files:
         if not f.filename or not f.filename.lower().endswith(allowed_exts):
             continue
         try:
-            # read uploaded raw bytes into memory
+            # read uploaded raw bytes into memory for multi-modal parsing
             content_bytes = await f.read()
-            # extract clean text according to file format
-            text_content = extract_text_from_bytes(f.filename, content_bytes)
-            if text_content.strip():
-                file_tuples.append((f.filename, text_content))
+            if content_bytes:
+                file_tuples.append((f.filename, content_bytes))
         except Exception as e:
             print(f"[Server] Error reading upload '{f.filename}': {e}")
 
     if not file_tuples:
         raise HTTPException(status_code=400, detail="No valid non-empty documents found (.pdf, .docx, .txt, .md).")
 
-    # call the clean pipeline contract with optional dynamic chunk settings
+    # call the clean pipeline contract with multi-modal parsing & optional dynamic chunk settings
     result = ingest(
         file_tuples,
         session_id=session_id,
@@ -132,7 +135,9 @@ def chat_endpoint(req: ChatRequest):
             session_id=req.session_id,
             k=req.k,
             temperature=req.temperature,
-            model=req.model
+            model=req.model,
+            enable_hybrid=req.enable_hybrid,
+            enable_reranker=req.enable_reranker
         )
         return response
     except Exception as e:
@@ -150,13 +155,15 @@ def clear_endpoint(req: ClearRequest):
     return result
 
 
-# --- Static Frontend Serving ---
+# --- Static Frontend & Media Serving ---
 @app.get("/")
 def serve_home():
     return FileResponse(static_dir / "index.html")
 
 
 app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+app.mount("/media", StaticFiles(directory=str(config.LOCAL_MEDIA_DIR)), name="media")
+
 
 
 if __name__ == "__main__":

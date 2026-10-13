@@ -5,6 +5,10 @@
     "chat.py",
     "ingestion.py",
     "retrieval.py",
+    "hybrid_search.py",
+    "reranker.py",
+    "media_store.py",
+    "vision.py",
     "__init__.py"
   ],
   "exclude": [
@@ -16,5 +20,7 @@
   ],
   "extraPaths": [
     "."
-  ]
+  ],
+  "venvPath": ".",
+  "venv": ".venv"
 }

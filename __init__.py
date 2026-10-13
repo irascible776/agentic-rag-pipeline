@@ -9,6 +9,22 @@ Any pipeline in this project exposes these 3 core functions:
 
 from ingestion import ingest_documents as ingest, extract_text_from_bytes
 from chat import ask_question as ask
-from retrieval import clear_session as clear
+from retrieval import clear_session as clear, retrieve_docs, retrieve_docs_with_telemetry
+import media_store
+import vision
+import hybrid_search
+import reranker
 
-__all__ = ["ingest", "ask", "clear", "extract_text_from_bytes"]
+__all__ = [
+    "ingest",
+    "ask",
+    "clear",
+    "retrieve_docs",
+    "retrieve_docs_with_telemetry",
+    "extract_text_from_bytes",
+    "media_store",
+    "vision",
+    "hybrid_search",
+    "reranker",
+]
+

@@ -61,6 +61,8 @@ const chunkOverlapSlider = document.getElementById("chunk-overlap-slider");
 const retrieverKSlider = document.getElementById("retriever-k-slider");
 const temperatureSlider = document.getElementById("temperature-slider");
 const modelSelect = document.getElementById("model-select");
+const chkHybrid = document.getElementById("chk-hybrid");
+const chkReranker = document.getElementById("chk-reranker");
 
 const valChunkSize = document.getElementById("val-chunk-size");
 const valChunkOverlap = document.getElementById("val-chunk-overlap");
@@ -72,6 +74,10 @@ const telemetryEmbedding = document.getElementById("telemetry-embedding");
 const telemetryRetrievalTime = document.getElementById("telemetry-retrieval-time");
 const telemetryGenerationTime = document.getElementById("telemetry-generation-time");
 const telemetryTotalTime = document.getElementById("telemetry-total-time");
+const telemetryDenseTime = document.getElementById("telemetry-dense-time");
+const telemetryBm25Time = document.getElementById("telemetry-bm25-time");
+const telemetryRerankTime = document.getElementById("telemetry-rerank-time");
+const telemetryCandidates = document.getElementById("telemetry-candidates");
 
 
 // --- 3. Tuning Preferences & Sliders State ---
@@ -81,6 +87,8 @@ const TuningConfig = {
   retrieverK: parseInt(localStorage.getItem("wb_retriever_k")) || 5,
   temperature: parseFloat(localStorage.getItem("wb_temperature")) || 0.1,
   model: localStorage.getItem("wb_model") || "gemini-3.6-flash",
+  enableHybrid: localStorage.getItem("wb_enable_hybrid") !== "false",
+  enableReranker: localStorage.getItem("wb_enable_reranker") !== "false",
 
   save() {
     localStorage.setItem("wb_chunk_size", String(this.chunkSize));
@@ -88,6 +96,8 @@ const TuningConfig = {
     localStorage.setItem("wb_retriever_k", String(this.retrieverK));
     localStorage.setItem("wb_temperature", String(this.temperature));
     localStorage.setItem("wb_model", this.model);
+    localStorage.setItem("wb_enable_hybrid", String(this.enableHybrid));
+    localStorage.setItem("wb_enable_reranker", String(this.enableReranker));
   },
 
   syncUI() {
@@ -104,6 +114,8 @@ const TuningConfig = {
     valTemperature.textContent = this.temperature.toFixed(2);
 
     modelSelect.value = this.model;
+    if (chkHybrid) chkHybrid.checked = this.enableHybrid;
+    if (chkReranker) chkReranker.checked = this.enableReranker;
   },
 
   reset() {
@@ -112,6 +124,8 @@ const TuningConfig = {
     this.retrieverK = 5;
     this.temperature = 0.1;
     this.model = "gemini-3.6-flash";
+    this.enableHybrid = true;
+    this.enableReranker = true;
     this.save();
     this.syncUI();
   }
@@ -146,6 +160,20 @@ modelSelect.addEventListener("change", (e) => {
   TuningConfig.model = e.target.value;
   TuningConfig.save();
 });
+
+if (chkHybrid) {
+  chkHybrid.addEventListener("change", (e) => {
+    TuningConfig.enableHybrid = e.target.checked;
+    TuningConfig.save();
+  });
+}
+
+if (chkReranker) {
+  chkReranker.addEventListener("change", (e) => {
+    TuningConfig.enableReranker = e.target.checked;
+    TuningConfig.save();
+  });
+}
 
 btnResetTuning.addEventListener("click", () => TuningConfig.reset());
 
@@ -209,13 +237,17 @@ async function checkSystemConfig() {
     statusDot.classList.add("ready");
     const isSupabase = data.mode === "supabase";
     storageStatusText.textContent = isSupabase ? "Supabase pgvector" : "Local ChromaDB";
-    corpusStatusBadge.textContent = isSupabase ? "Cloud Ready" : "Local Ready";
+    if (data.enable_hybrid_search && data.enable_reranker) {
+      corpusStatusBadge.textContent = isSupabase ? "Cloud (Hybrid+Rerank)" : "Local (Hybrid+Rerank)";
+    } else {
+      corpusStatusBadge.textContent = isSupabase ? "Cloud Ready" : "Local Ready";
+    }
 
     if (telemetryStorage) {
       telemetryStorage.textContent = isSupabase ? "🟢 Supabase Cloud" : "💻 Local ChromaDB";
     }
     if (telemetryEmbedding && data.embedding_model) {
-      telemetryEmbedding.textContent = `${data.embedding_model} (768d)`;
+      telemetryEmbedding.textContent = `${data.embedding_model}`;
     }
     if (statEngine) {
       statEngine.textContent = isSupabase ? "Supabase" : "Chroma";
@@ -398,7 +430,9 @@ async function handleSendMessage(overrideQuery = null) {
         session_id: sessionId,
         k: TuningConfig.retrieverK,
         temperature: TuningConfig.temperature,
-        model: TuningConfig.model
+        model: TuningConfig.model,
+        enable_hybrid: TuningConfig.enableHybrid,
+        enable_reranker: TuningConfig.enableReranker
       })
     });
 
@@ -408,9 +442,14 @@ async function handleSendMessage(overrideQuery = null) {
     }
 
     if (data.answer) {
-      appendMessage("ai", data.answer, data.sources || []);
+      appendMessage("ai", data.answer, data.sources || [], data.media || []);
       chatHistory.push({ role: "user", content: query });
-      chatHistory.push({ role: "assistant", content: data.answer });
+      chatHistory.push({
+        role: "assistant",
+        content: data.answer,
+        sources: data.sources || [],
+        media: data.media || []
+      });
       sessionStorage.setItem("wb_chat_history", JSON.stringify(chatHistory));
 
       // Update live telemetry in drawer!
@@ -418,6 +457,10 @@ async function handleSendMessage(overrideQuery = null) {
         if (telemetryRetrievalTime) telemetryRetrievalTime.textContent = `${data.telemetry.retrieval_ms} ms`;
         if (telemetryGenerationTime) telemetryGenerationTime.textContent = `${data.telemetry.generation_ms} ms`;
         if (telemetryTotalTime) telemetryTotalTime.textContent = `${data.telemetry.total_ms} ms`;
+        if (telemetryDenseTime) telemetryDenseTime.textContent = `${data.telemetry.dense_search_ms ?? 0} ms`;
+        if (telemetryBm25Time) telemetryBm25Time.textContent = `${data.telemetry.bm25_search_ms ?? 0} ms`;
+        if (telemetryRerankTime) telemetryRerankTime.textContent = `${data.telemetry.rerank_ms ?? 0} ms`;
+        if (telemetryCandidates) telemetryCandidates.textContent = `${data.telemetry.candidates_pooled ?? '--'} pooled → ${data.telemetry.chunks_retrieved ?? '--'} sent`;
       }
     } else {
       appendMessage("ai", "I was unable to retrieve a grounded answer from the indexed documents.");
@@ -478,7 +521,7 @@ btnClearChat.addEventListener("click", () => {
 
 
 // --- 12. Message Rendering & Utilities ---
-function appendMessage(role, text, sources = []) {
+function appendMessage(role, text, sources = [], media = []) {
   const row = document.createElement("div");
   row.className = `message-row ${role}`;
 
@@ -504,6 +547,48 @@ function appendMessage(role, text, sources = []) {
       sourcesBox.appendChild(pill);
     });
     bubble.appendChild(sourcesBox);
+  }
+
+  // Multi-Modal Visual Evidence Gallery (Level 2)
+  if (media && media.length > 0) {
+    const mediaGallery = document.createElement("div");
+    mediaGallery.className = "media-gallery";
+    mediaGallery.innerHTML = '<span class="media-gallery-label">Visual Figures & Evidence:</span>';
+
+    const mediaGrid = document.createElement("div");
+    mediaGrid.className = "media-grid";
+
+    media.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "media-card";
+      card.innerHTML = `
+        <div class="media-thumb-wrap">
+          <img src="${item.url}" alt="${item.caption || 'Figure'}" loading="lazy" class="media-thumb" />
+          <div class="media-zoom-overlay">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              <line x1="11" y1="8" x2="11" y2="14"></line>
+              <line x1="8" y1="11" x2="14" y2="11"></line>
+            </svg>
+            <span>Expand</span>
+          </div>
+        </div>
+        <div class="media-meta">
+          <span class="media-caption" title="${item.caption || ''}">${item.caption || 'Visual Asset'}</span>
+          <span class="media-source-tag">${item.source}${item.page ? ` (p.${item.page})` : ''}</span>
+        </div>
+      `;
+
+      card.addEventListener("click", () => {
+        openLightbox(item.url, item.caption, item.source, item.page);
+      });
+
+      mediaGrid.appendChild(card);
+    });
+
+    mediaGallery.appendChild(mediaGrid);
+    bubble.appendChild(mediaGallery);
   }
 
   row.appendChild(bubble);
@@ -545,6 +630,43 @@ function appendMessage(role, text, sources = []) {
   messagesContainer.appendChild(row);
   messagesContainer.scrollTop = messagesContainer.scrollHeight;
   return row;
+}
+
+// Lightbox Expansion Modal for Figures & Images
+function openLightbox(url, caption, source, page) {
+  let lightbox = document.getElementById("media-lightbox");
+  if (!lightbox) {
+    lightbox = document.createElement("div");
+    lightbox.id = "media-lightbox";
+    lightbox.className = "lightbox-backdrop";
+    lightbox.innerHTML = `
+      <div class="lightbox-modal">
+        <button class="lightbox-close" id="lightbox-close-btn" aria-label="Close modal">&times;</button>
+        <div class="lightbox-body">
+          <img class="lightbox-img" id="lightbox-img" src="" alt="Enlarged figure" />
+          <div class="lightbox-footer">
+            <div class="lightbox-caption" id="lightbox-caption"></div>
+            <div class="lightbox-tag" id="lightbox-tag"></div>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(lightbox);
+
+    const close = () => lightbox.classList.remove("active");
+    lightbox.querySelector("#lightbox-close-btn").addEventListener("click", close);
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) close();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && lightbox.classList.contains("active")) close();
+    });
+  }
+
+  document.getElementById("lightbox-img").src = url;
+  document.getElementById("lightbox-caption").textContent = caption || "";
+  document.getElementById("lightbox-tag").textContent = `${source}${page ? ` (Page ${page})` : ""}`;
+  lightbox.classList.add("active");
 }
 
 function appendTypingIndicator() {
@@ -657,7 +779,12 @@ function restoreSession() {
       if (chatHistory.length > 0) {
         if (guideContainer) guideContainer.classList.add("hidden");
         chatHistory.forEach(msg => {
-          appendMessage(msg.role === "user" ? "user" : "ai", msg.content);
+          appendMessage(
+            msg.role === "user" ? "user" : "ai",
+            msg.content,
+            msg.sources || [],
+            msg.media || []
+          );
         });
       }
     } catch (e) {

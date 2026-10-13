@@ -1,0 +1,47 @@
+Distributed systems and relational database internals form the foundational backbone of
+large-scale data processing, cloud infrastructure, and transactional persistence. At the
+theoretical core of distributed computing lies the CAP theorem, formulated by Eric Brewer,
+which proves that a distributed data store can simultaneously guarantee at most two out of
+three properties: Consistency, Availability, and Partition Tolerance. In the presence of
+unavoidable network partitions in asynchronous networks, systems must fundamentally choose
+between strong linearizable consistency (CP) and high availability with eventual consistency
+(AP), as formalised by the PACELC theorem. Consensus algorithms resolve the problem of
+agreeing on state transitions across unreliable nodes subject to crash-recovery or Byzantine
+faults. The Paxos protocol, formulated by Leslie Lamport, achieves consensus through Synod
+rounds involving proposers, acceptors, and learners, utilizing ballot numbers and quorum
+majorities. The Raft consensus algorithm, designed by Ongaro and Ousterhout for enhanced
+understandability, decomposes state machine replication into three distinct sub-problems:
+leader election using randomized heartbeat timers, log replication through term numbers
+and index monotonically increasing logs, and safety invariants guaranteeing state consistency.
+Byzantine Fault Tolerant (BFT) protocols, such as PBFT, maintain consensus even when up to
+one-third of participating nodes behave maliciously or arbitrary, relying on three-phase
+pre-prepare, prepare, and commit message exchanges. In database engine architecture, storage
+managers dictate read and write amplification trade-offs. Traditional relational engines
+(such as PostgreSQL and MySQL InnoDB) employ B+ Tree storage structures, where internal
+nodes guide search traversal and leaf nodes contain data tuples or row pointers linked in
+sequential doubly-linked lists. B+ Trees provide $O(\log N)$ point lookups and optimal
+sequential range scanning, but incur heavy random I/O write amplification when modifying
+arbitrary disk pages. To overcome write bottlenecks in write-intensive workloads, modern
+storage engines utilize Log-Structured Merge (LSM) Trees (e.g., RocksDB, LevelDB, Cassandra).
+In an LSM architecture, incoming writes are appended sequentially to an in-memory MemTable
+(backed by an append-only write-ahead log for crash durability) and concurrently stored in
+a skip list. When the MemTable exceeds its memory budget, it is flushed to disk as an
+immutable Sorted String Table (SSTable) arranged in multiple tiered or leveled compaction
+hierarchies. Point lookups in LSM trees are accelerated through probabilistic Bloom filters
+and sparse index blocks, drastically reducing unnecessary disk accesses for non-existent
+keys. Concurrency control in relational database management systems guarantees ACID
+properties (Atomicity, Consistency, Isolation, Durability). Multi-Version Concurrency
+Control (MVCC) enables non-blocking reads where readers do not block writers and writers
+do not block readers. In PostgreSQL MVCC, every tuple header maintains transaction metadata
+fields (xmin and xmax), reflecting the creating and deleting transaction identifiers.
+Transactions examine snapshots of active transactions (Snapshot Isolation) to determine
+tuple visibility, preventing dirty reads and non-repeatable reads. Write-Ahead Logging
+(WAL) and the ARIES recovery algorithm (Analysis, Redo, Undo) ensure durability and atomic
+crash recovery; transactions cannot be marked committed until their corresponding WAL
+records are flushed to persistent storage via fsync system calls. Distributed transactions
+crossing database shards employ the Two-Phase Commit (2PC) protocol or distributed saga
+patterns, coordinating prepare and commit phases across distributed resource managers.
+Modern cloud-native databases (e.g., Google Spanner, CockroachDB) combine Raft-replicated
+partitions with hardware TrueTime atomic clocks or Hybrid Logical Clocks (HLC) to achieve
+globally linearizable external consistency (Serializable ACID) across geographically
+distributed datacenters without requiring central coordination locks.

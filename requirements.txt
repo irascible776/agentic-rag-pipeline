@@ -14,3 +14,6 @@ python-multipart
 pydantic
 pypdf
 python-docx
+pymupdf
+rank-bm25
+flashrank
