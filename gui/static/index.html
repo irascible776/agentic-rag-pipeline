@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nexus | Grounded Intelligence & QA</title>
+  <title>Workbench | Document Intelligence & Grounded QA</title>
 
   <!-- Google Fonts: Inter + JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,27 +18,24 @@
     })();
   </script>
 
-  <!-- Custom Styles (Cache buster v=20261014-v4) -->
-  <link rel="stylesheet" href="/static/style.css?v=20261014-v4">
+  <!-- Custom Styles (Cache buster v=20261014-v5) -->
+  <link rel="stylesheet" href="/static/style.css?v=20261014-v5">
 </head>
 <body>
-  <!-- Outer Floating App Window Frame (Visionary 2.0 Style) -->
+  <!-- Outer Floating App Container -->
   <div class="app-container" id="app-container">
     
-    <!-- LEFT SIDEBAR: Full Hub for Navigation, Corpus & Settings -->
+    <!-- LEFT SIDEBAR: Streamlined Hub (Step 3 & 4) -->
     <aside class="sidebar-panel" id="sidebar-panel">
       
-      <!-- Sidebar Header: Brand + Collapse Toggle -->
+      <!-- 1. Header: App Name "Workbench" + Muted Version + Manual Collapse Toggle -->
       <div class="sidebar-header">
         <div class="brand-group">
-          <div class="brand-avatar">N</div>
-          <div class="brand-info">
-            <span class="brand-title">Nexus 2.0</span>
-            <span class="brand-version" id="corpus-status-badge">Hybrid RAG</span>
-          </div>
+          <span class="brand-title">Workbench</span>
+          <span class="brand-version" id="corpus-status-badge">v3.0</span>
         </div>
-        <button id="btn-sidebar-toggle" class="sidebar-icon-btn" type="button" title="Collapse Sidebar" aria-label="Collapse Sidebar">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button id="btn-sidebar-toggle" class="sidebar-icon-btn" type="button" title="Toggle Sidebar (Ctrl/Cmd+B)" aria-label="Toggle Sidebar">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <rect x="3" y="3" width="18" height="18" rx="3" ry="3"></rect>
             <line x1="9" y1="3" x2="9" y2="21"></line>
           </svg>
@@ -48,338 +45,240 @@
       <!-- Scrollable Sidebar Body -->
       <div class="sidebar-scrollable">
         
-        <!-- Section: Menu Navigation -->
-        <div class="sidebar-section">
-          <span class="sidebar-section-title">MENU</span>
-          <nav class="sidebar-nav">
-            <button class="nav-item active" type="button" id="nav-chat">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        <!-- 2. Compact Upload Dropzone -->
+        <div class="drop-zone" id="drop-zone">
+          <input type="file" id="file-input" multiple accept=".pdf,.docx,.txt,.md" hidden>
+          <div class="drop-zone-content">
+            <div class="drop-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
               </svg>
-              <span>Chat Workspace</span>
-            </button>
-            <button class="nav-item" type="button" id="btn-toggle-guide">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-                <line x1="12" y1="17" x2="12.01" y2="17"></line>
-              </svg>
-              <span>Quick Guide</span>
-            </button>
-            <button class="nav-item" type="button" id="btn-open-tuning">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="3"></circle>
-                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-              </svg>
-              <span>Pipeline Tuning</span>
-            </button>
-            <button class="nav-item" type="button" id="btn-clear-chat" title="Clear conversation history">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="3 6 5 6 21 6"></polyline>
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-              </svg>
-              <span>Clear History</span>
-            </button>
-          </nav>
+            </div>
+            <p class="drop-title">Drop documents here</p>
+            <span class="drop-subtitle">PDF, DOCX, TXT, MD • Click to browse</span>
+          </div>
         </div>
 
-        <!-- Section: Knowledge Ingestion & Corpus -->
+        <!-- 3. Retain in Knowledge Base Toggle Row -->
+        <div class="retention-control">
+          <label class="toggle-container" for="chk-permanent">
+            <input type="checkbox" id="chk-permanent" checked>
+            <span class="toggle-switch"></span>
+            <span class="toggle-label">Retain in Knowledge Base</span>
+          </label>
+        </div>
+
+        <!-- Step 4: Single Thin Progress Bar with Text Label (During Processing) -->
+        <div class="progress-box hidden" id="progress-box">
+          <div class="progress-meta">
+            <span class="pulsing-dot"></span>
+            <span class="progress-msg" id="progress-msg">Extracting document text...</span>
+          </div>
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="progress-bar-fill"></div>
+          </div>
+          <!-- Hidden fallback step elements preserving JS compatibility -->
+          <div class="hidden">
+            <div id="step-extract" class="step-item"></div>
+            <div id="step-chunk" class="step-item"></div>
+            <div id="step-embed" class="step-item"></div>
+          </div>
+        </div>
+
+        <!-- 4. Indexed Documents List -->
+        <div class="file-list-section">
+          <div class="file-list-header">
+            <span class="sidebar-section-title">INDEXED DOCUMENTS (<span id="file-count">0</span>)</span>
+          </div>
+          <ul class="file-list" id="file-list">
+            <li class="empty-file-hint">No documents loaded yet. Drop files above to index automatically.</li>
+          </ul>
+        </div>
+
+        <!-- Live Corpus Stats Panel -->
+        <div class="stats-panel hidden" id="stats-card">
+          <div class="stat-cell">
+            <span class="stat-number" id="stat-files">0</span>
+            <span class="stat-tag">Files</span>
+          </div>
+          <div class="stat-separator"></div>
+          <div class="stat-cell">
+            <span class="stat-number" id="stat-chunks">0</span>
+            <span class="stat-tag">Chunks</span>
+          </div>
+          <div class="stat-separator"></div>
+          <div class="stat-cell">
+            <span class="stat-number" id="stat-engine">pgvector</span>
+            <span class="stat-tag">Engine</span>
+          </div>
+        </div>
+
+        <!-- 5. Collapsible Tuning Section Row -->
         <div class="sidebar-section">
-          <div class="sidebar-section-header">
-            <span class="sidebar-section-title">KNOWLEDGE CORPUS</span>
-          </div>
-
-          <!-- Drag & Drop Upload Zone -->
-          <div class="drop-zone" id="drop-zone">
-            <input type="file" id="file-input" multiple accept=".pdf,.docx,.txt,.md" hidden>
-            <div class="drop-zone-content">
-              <div class="drop-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                  <polyline points="17 8 12 3 7 8"></polyline>
-                  <line x1="12" y1="3" x2="12" y2="15"></line>
-                </svg>
-              </div>
-              <p class="drop-title">Drop documents here</p>
-              <span class="drop-subtitle">PDF, DOCX, TXT, MD • Click to upload</span>
-            </div>
-          </div>
-
-          <!-- Retention Toggle -->
-          <div class="retention-control">
-            <label class="toggle-container" for="chk-permanent">
-              <input type="checkbox" id="chk-permanent" checked>
-              <span class="toggle-switch"></span>
-              <span class="toggle-label">Retain in Vector Store</span>
-            </label>
-            <p class="retention-hint">Keep vectors permanently across sessions.</p>
-          </div>
-
-          <!-- Ingestion Stepper Card (Visible during upload/indexing) -->
-          <div class="progress-card hidden" id="progress-box">
-            <div class="progress-header">
-              <div class="pulsing-indicator"></div>
-              <span id="progress-msg">Processing documents...</span>
-            </div>
-            <div class="stepper-track">
-              <div class="step-item active" id="step-extract">
-                <span class="step-dot"></span>
-                <span class="step-text">Extract</span>
-              </div>
-              <div class="step-item" id="step-chunk">
-                <span class="step-dot"></span>
-                <span class="step-text">Chunk</span>
-              </div>
-              <div class="step-item" id="step-embed">
-                <span class="step-dot"></span>
-                <span class="step-text">Embed & Index</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Uploaded Documents File List -->
-          <div class="file-list-section">
-            <div class="file-list-header">
-              <span class="file-list-title">Indexed files (<span id="file-count">0</span>)</span>
-            </div>
-            <ul class="file-list" id="file-list">
-              <li class="empty-file-hint">No documents loaded yet. Drop files above to index automatically.</li>
-            </ul>
-          </div>
-
-          <!-- Live Corpus Stats Card -->
-          <div class="stats-panel hidden" id="stats-card">
-            <div class="stat-cell">
-              <span class="stat-number" id="stat-files">0</span>
-              <span class="stat-tag">Files</span>
-            </div>
-            <div class="stat-separator"></div>
-            <div class="stat-cell">
-              <span class="stat-number" id="stat-chunks">0</span>
-              <span class="stat-tag">Chunks</span>
-            </div>
-            <div class="stat-separator"></div>
-            <div class="stat-cell">
-              <span class="stat-number" id="stat-engine">pgvector</span>
-              <span class="stat-tag">Engine</span>
-            </div>
-          </div>
-
+          <button class="nav-item tuning-trigger-btn" type="button" id="btn-open-tuning">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            <span>Pipeline Tuning</span>
+            <span class="tuning-chevron">›</span>
+          </button>
+          <button class="nav-item" type="button" id="btn-clear-chat" title="Clear conversation history">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+            <span>Clear History</span>
+          </button>
         </div>
 
       </div>
 
-      <!-- Bottom Pinned Controls (Engine Pill, Theme Toggle, User Profile) -->
+      <!-- 6. Bottom Pinned: Guide, Theme, Supabase Status Dot -->
       <div class="sidebar-footer">
         
-        <!-- Storage Engine Pill -->
-        <div class="status-pill" id="storage-pill" title="Vector Engine Status">
+        <!-- Guide Row -->
+        <button class="sidebar-footer-row-btn" type="button" id="btn-toggle-guide">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          <span>Guide</span>
+        </button>
+
+        <!-- Theme Toggle Row -->
+        <button id="btn-toggle-theme" class="sidebar-footer-row-btn" type="button" title="Toggle Theme" aria-label="Toggle visual theme">
+          <svg id="theme-icon-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="hidden">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg id="theme-icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+          <span id="theme-btn-label">Theme</span>
+        </button>
+
+        <!-- Supabase Status Dot Row -->
+        <div class="sidebar-status-row" id="storage-pill" title="Vector Engine Status">
           <span class="status-dot" id="status-dot"></span>
-          <span id="storage-status-text">Detecting Engine...</span>
+          <span class="status-text" id="storage-status-text">Detecting Engine...</span>
         </div>
 
-        <!-- Theme Switcher -->
-        <div class="footer-action-row">
-          <button id="btn-toggle-theme" class="sidebar-footer-btn" type="button" title="Toggle Theme" aria-label="Toggle visual theme">
-            <svg id="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="hidden">
-              <circle cx="12" cy="12" r="5"></circle>
-              <line x1="12" y1="1" x2="12" y2="3"></line>
-              <line x1="12" y1="21" x2="12" y2="23"></line>
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-              <line x1="1" y1="12" x2="3" y2="12"></line>
-              <line x1="21" y1="12" x2="23" y2="12"></line>
-              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-            </svg>
-            <svg id="theme-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-            </svg>
-            <span id="theme-btn-label">Theme</span>
-          </button>
-        </div>
-
-        <!-- User / Session Card (Matching Darlene Robertson profile card in Visionary 2.0) -->
-        <div class="user-profile-card" id="session-pill" title="Click to copy Session ID">
-          <div class="user-avatar-badge">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-          </div>
-          <div class="user-meta">
-            <span class="user-name">Nexus Operator</span>
-            <span class="user-session" id="session-id-display">...</span>
-          </div>
+        <!-- Operator Session Pill -->
+        <div class="session-compact-row" id="session-pill" title="Click to copy Session ID">
+          <span class="session-tag">Session:</span>
+          <code id="session-id-display">...</code>
         </div>
 
       </div>
 
     </aside>
 
-    <!-- RIGHT MAIN: Chat Canvas bathed in Warm Dusk Ambient Lighting -->
+    <!-- RIGHT MAIN: Centered Chat Column (Max-width ~760px) -->
     <section class="canvas-panel" id="canvas-panel">
       
-      <!-- Minimalist Canvas Top Overlay (Sidebar Open Trigger & Subtle Status) -->
-      <div class="canvas-top-bar">
-        <button id="btn-sidebar-open" class="floating-sidebar-btn hidden" type="button" title="Open Sidebar & Knowledge Base" aria-label="Open Sidebar">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="18" height="18" rx="3" ry="3"></rect>
-            <line x1="9" y1="3" x2="9" y2="21"></line>
-          </svg>
-          <span>Knowledge & Settings</span>
-        </button>
+      <!-- Subtle Floating Sidebar Reopen Trigger (Visible when collapsed) -->
+      <button id="btn-sidebar-open" class="floating-sidebar-btn hidden" type="button" title="Open Sidebar (Ctrl/Cmd+B)" aria-label="Open Sidebar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="18" height="18" rx="3" ry="3"></rect>
+          <line x1="9" y1="3" x2="9" y2="21"></line>
+        </svg>
+        <span>Sidebar</span>
+      </button>
 
-        <div class="canvas-live-status">
-          <span class="canvas-status-text" id="chat-status-subtitle" aria-live="polite">Awaiting document indexing</span>
-        </div>
-      </div>
-
-      <!-- Messages Stream Area -->
-      <div class="messages-container" id="messages-container">
+      <!-- Centered Chat Container -->
+      <div class="chat-column">
         
-        <!-- Onboarding Overlapping Fan-Out Card Stack (Empty / Initial State) -->
-        <div class="guide-wrapper" id="guide-container">
+        <!-- Messages Stream -->
+        <div class="messages-container" id="messages-container">
           
-          <div class="guide-header">
-            <span class="guide-badge">Grounded QA</span>
-            <h2>Grounded Intelligence with Nexus</h2>
-            <p>Upload documents in the sidebar to unlock grounded reasoning, semantic search, and verified citations.</p>
-          </div>
-
-          <!-- Overlapping Card Fan-Out Stack (Visionary 2.0 Photo Stack Style) -->
-          <div class="card-stack" id="guide-card-stack">
-            
-            <!-- Card 1: Multi-Modal (Left Tilted) -->
-            <div class="stack-card card-left">
-              <div class="stack-card-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                  <polyline points="14 2 14 8 20 8"></polyline>
-                </svg>
-              </div>
-              <h3>Multi-Modal Ingestion</h3>
-              <p>Extracts text, financial tables, and embedded diagrams from PDFs and Word documents.</p>
-              <div class="stack-pill-row">
-                <span class="mini-pill">PDF</span>
-                <span class="mini-pill">DOCX</span>
-                <span class="mini-pill">Vision</span>
-              </div>
+          <!-- Empty Chat State: One Greeting Line + 3 Suggested Prompts as Quiet Pills -->
+          <div class="chat-empty-state" id="guide-container">
+            <p class="greeting-line">What would you like to explore in your documents?</p>
+            <div class="empty-prompt-chips" id="prompt-suggestions">
+              <button type="button" class="suggestion-chip" data-prompt="Summarize the key takeaways and core conclusions of the uploaded documents.">
+                <span>Summarize key takeaways</span>
+              </button>
+              <button type="button" class="suggestion-chip" data-prompt="Extract the critical dates, milestones, or numerical metrics mentioned in these files.">
+                <span>Extract metrics & dates</span>
+              </button>
+              <button type="button" class="suggestion-chip" data-prompt="What are the main technical specifications and methodologies outlined?">
+                <span>Outline specifications</span>
+              </button>
             </div>
-
-            <!-- Card 2: Center Featured Card (Grounded QA) -->
-            <div class="stack-card card-center">
-              <div class="stack-card-icon highlight">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-                </svg>
-              </div>
-              <h3>Grounded QA & Citations</h3>
-              <p>Responses are synthesized strictly from indexed source passages with verifiable citations.</p>
-              <div class="stack-pill-row">
-                <span class="mini-pill primary">✓ Verified Citations</span>
-              </div>
-            </div>
-
-            <!-- Card 3: Hybrid Search (Right Tilted) -->
-            <div class="stack-card card-right">
-              <div class="stack-card-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                </svg>
-              </div>
-              <h3>Hybrid Semantic Retrieval</h3>
-              <p>Combines keyword precision with dense AI vector search and two-stage cross-encoder re-ranking.</p>
-              <div class="stack-pill-row">
-                <span class="mini-pill">BM25</span>
-                <span class="mini-pill">Vectors</span>
-                <span class="mini-pill">Re-rank</span>
-              </div>
-            </div>
-
-          </div>
-
-          <div class="guide-dismiss-row">
-            <span class="guide-hint-text">Drop a file in the sidebar to auto-index and begin.</span>
           </div>
 
         </div>
 
-      </div>
-
-      <!-- Floating Bottom Input Dock (Visionary 2.0 Island Capsule) -->
-      <div class="chat-dock-wrap">
-        
-        <!-- Prompt Suggestions (Active when indexed) -->
-        <div class="prompt-suggestions hidden" id="prompt-suggestions">
-          <button type="button" class="suggestion-chip" data-prompt="Summarize the key takeaways and core conclusions of the uploaded documents.">
-            <span>Summarize key takeaways</span>
-          </button>
-          <button type="button" class="suggestion-chip" data-prompt="Extract the critical dates, milestones, or numerical metrics mentioned in these files.">
-            <span>Extract metrics & dates</span>
-          </button>
-          <button type="button" class="suggestion-chip" data-prompt="What are the main technical specifications and methodologies outlined?">
-            <span>Outline specifications</span>
-          </button>
-        </div>
-
-        <!-- The Floating Island Dock -->
-        <div class="floating-dock">
-          <form id="chat-form" action="javascript:void(0);" onsubmit="return false;">
-            
-            <!-- Input Textarea -->
-            <textarea 
-              id="chat-input" 
-              rows="1" 
-              placeholder="Ask Nexus anything about your documents... (Press Enter to send)" 
-              disabled
-            ></textarea>
-
-            <!-- Bottom Row Controls inside Dock -->
-            <div class="dock-bottom-row">
-              <div class="dock-actions-left">
-                <button type="button" class="dock-icon-btn" title="Model Info">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <path d="M12 16v-4"></path>
-                    <path d="M12 8h.01"></path>
-                  </svg>
-                </button>
-                <div class="dock-chips">
-                  <span class="dock-chip">Grounded QA <span class="chip-dot"></span></span>
-                  <span class="dock-chip">Hybrid Search <span class="chip-dot"></span></span>
-                </div>
-              </div>
-
-              <div class="dock-actions-right">
-                <button type="button" class="dock-icon-btn" title="Voice Input (Speech-to-Text)">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                    <line x1="12" y1="19" x2="12" y2="23"></line>
-                    <line x1="8" y1="23" x2="16" y2="23"></line>
-                  </svg>
-                </button>
-                <button type="button" id="btn-send" class="dock-send-btn" disabled title="Send Question (Enter)">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <line x1="12" y1="19" x2="12" y2="5"></line>
-                    <polyline points="5 12 12 5 19 12"></polyline>
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-          </form>
-        </div>
-
-        <div class="dock-disclaimer">
-          <span>Content grounded strictly on indexed documents & verified citations.</span>
+        <!-- Floating Bottom Docked Input -->
+        <div class="chat-dock-wrap">
+          <div class="floating-dock">
+            <form id="chat-form" action="javascript:void(0);" onsubmit="return false;">
+              <textarea 
+                id="chat-input" 
+                rows="1" 
+                placeholder="Ask about your documents..." 
+                disabled
+              ></textarea>
+              <button type="button" id="btn-send" class="dock-send-btn" disabled title="Send Question (Enter)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="19" x2="12" y2="5"></line>
+                  <polyline points="5 12 12 5 19 12"></polyline>
+                </svg>
+              </button>
+            </form>
+          </div>
+          <div class="dock-disclaimer">
+            <span id="chat-status-subtitle">Grounded on uploaded documents & vector store.</span>
+          </div>
         </div>
 
       </div>
 
     </section>
+
+    <!-- Lightweight Quick Start Guide Modal (Opened from Sidebar "Guide" row) -->
+    <div class="guide-modal-backdrop hidden" id="guide-modal">
+      <div class="guide-modal-card">
+        <div class="guide-modal-header">
+          <h3>How to use Workbench</h3>
+          <button type="button" class="modal-close-btn" id="guide-modal-close" aria-label="Close guide">&times;</button>
+        </div>
+        <div class="guide-modal-body">
+          <div class="guide-step">
+            <span class="step-num">1</span>
+            <div>
+              <strong>Multi-Modal Ingestion</strong>
+              <p>Upload PDF, DOCX, TXT, or MD in the sidebar to extract text, tables, and vision diagrams.</p>
+            </div>
+          </div>
+          <div class="guide-step">
+            <span class="step-num">2</span>
+            <div>
+              <strong>Hybrid Semantic Retrieval</strong>
+              <p>Combines exact BM25 keywords with vector embeddings and cross-encoder re-ranking.</p>
+            </div>
+          </div>
+          <div class="guide-step">
+            <span class="step-num">3</span>
+            <div>
+              <strong>Grounded Answers & Citations</strong>
+              <p>Answers are synthesized directly from your source passages with verified citations.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Slide-over Pipeline Tuning & Diagnostics Drawer (Full Configurations Preserved) -->
     <div class="drawer-backdrop hidden" id="drawer-backdrop"></div>
@@ -388,7 +287,7 @@
       <div class="drawer-header">
         <div class="drawer-title-group">
           <div class="drawer-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <circle cx="12" cy="12" r="3"></circle>
               <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
             </svg>
@@ -399,7 +298,7 @@
           </div>
         </div>
         <button id="btn-close-drawer" class="icon-close-btn" type="button" title="Close Drawer (Esc)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
@@ -419,13 +318,6 @@
           <div class="control-group">
             <div class="control-header">
               <label for="chunk-size-slider">Chunk Size: <strong id="val-chunk-size">1,500</strong> chars</label>
-              <div class="info-tooltip-wrap">
-                <span class="info-icon" tabindex="0">ⓘ</span>
-                <div class="tooltip-popover">
-                  <strong>Chunk Size (characters)</strong><br>
-                  Controls the length of text split into each searchable vector block.
-                </div>
-              </div>
             </div>
             <input type="range" id="chunk-size-slider" min="500" max="3000" step="100" value="1500">
             <div class="range-labels">
@@ -439,13 +331,6 @@
           <div class="control-group">
             <div class="control-header">
               <label for="chunk-overlap-slider">Chunk Overlap: <strong id="val-chunk-overlap">150</strong> chars</label>
-              <div class="info-tooltip-wrap">
-                <span class="info-icon" tabindex="0">ⓘ</span>
-                <div class="tooltip-popover">
-                  <strong>Chunk Overlap (characters)</strong><br>
-                  The number of shared characters between adjacent chunks. Prevents sentences from being sliced.
-                </div>
-              </div>
             </div>
             <input type="range" id="chunk-overlap-slider" min="50" max="500" step="25" value="150">
             <div class="range-labels">
@@ -467,13 +352,6 @@
           <div class="control-group">
             <div class="control-header">
               <label for="retriever-k-slider">Top-K Passages: <strong id="val-retriever-k">5</strong> chunks</label>
-              <div class="info-tooltip-wrap">
-                <span class="info-icon" tabindex="0">ⓘ</span>
-                <div class="tooltip-popover">
-                  <strong>Top-K Passages</strong><br>
-                  The number of most relevant chunks passed to Gemini. Higher values provide deeper context.
-                </div>
-              </div>
             </div>
             <input type="range" id="retriever-k-slider" min="1" max="10" step="1" value="5">
             <div class="range-labels">
@@ -487,13 +365,6 @@
           <div class="control-group">
             <div class="control-header">
               <label for="temperature-slider">LLM Temperature: <strong id="val-temperature">0.1</strong></label>
-              <div class="info-tooltip-wrap">
-                <span class="info-icon" tabindex="0">ⓘ</span>
-                <div class="tooltip-popover">
-                  <strong>Model Temperature</strong><br>
-                  Controls randomness in the answer. Set near 0.0 for strict fact reproduction.
-                </div>
-              </div>
             </div>
             <input type="range" id="temperature-slider" min="0.0" max="0.7" step="0.05" value="0.1">
             <div class="range-labels">
@@ -596,7 +467,7 @@
 
   </div>
 
-  <!-- Client Controller Script (Cache buster v=20261014-v4) -->
-  <script src="/static/app.js?v=20261014-v4"></script>
+  <!-- Client Controller Script (Cache buster v=20261014-v5) -->
+  <script src="/static/app.js?v=20261014-v5"></script>
 </body>
 </html>

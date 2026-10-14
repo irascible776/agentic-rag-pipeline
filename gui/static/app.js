@@ -33,6 +33,7 @@ const chkPermanent = document.getElementById("chk-permanent");
 
 const progressBox = document.getElementById("progress-box");
 const progressMsg = document.getElementById("progress-msg");
+const progressBarFill = document.getElementById("progress-bar-fill");
 const stepExtract = document.getElementById("step-extract");
 const stepChunk = document.getElementById("step-chunk");
 const stepEmbed = document.getElementById("step-embed");
@@ -44,6 +45,8 @@ const statEngine = document.getElementById("stat-engine");
 
 const messagesContainer = document.getElementById("messages-container");
 const guideContainer = document.getElementById("guide-container");
+const guideModal = document.getElementById("guide-modal");
+const guideModalClose = document.getElementById("guide-modal-close");
 const btnToggleGuide = document.getElementById("btn-toggle-guide");
 const promptSuggestions = document.getElementById("prompt-suggestions");
 const chatStatusSubtitle = document.getElementById("chat-status-subtitle");
@@ -53,38 +56,7 @@ const chatForm = document.getElementById("chat-form");
 const chatInput = document.getElementById("chat-input");
 const btnSend = document.getElementById("btn-send");
 
-// Tuning Drawer DOM
-const btnOpenTuning = document.getElementById("btn-open-tuning");
-const btnCloseDrawer = document.getElementById("btn-close-drawer");
-const btnSaveDrawer = document.getElementById("btn-save-drawer");
-const btnResetTuning = document.getElementById("btn-reset-tuning");
-const tuningDrawer = document.getElementById("tuning-drawer");
-const drawerBackdrop = document.getElementById("drawer-backdrop");
-
-const chunkSizeSlider = document.getElementById("chunk-size-slider");
-const chunkOverlapSlider = document.getElementById("chunk-overlap-slider");
-const retrieverKSlider = document.getElementById("retriever-k-slider");
-const temperatureSlider = document.getElementById("temperature-slider");
-const modelSelect = document.getElementById("model-select");
-const chkHybrid = document.getElementById("chk-hybrid");
-const chkReranker = document.getElementById("chk-reranker");
-
-const valChunkSize = document.getElementById("val-chunk-size");
-const valChunkOverlap = document.getElementById("val-chunk-overlap");
-const valRetrieverK = document.getElementById("val-retriever-k");
-const valTemperature = document.getElementById("val-temperature");
-
-const telemetryStorage = document.getElementById("telemetry-storage");
-const telemetryEmbedding = document.getElementById("telemetry-embedding");
-const telemetryRetrievalTime = document.getElementById("telemetry-retrieval-time");
-const telemetryGenerationTime = document.getElementById("telemetry-generation-time");
-const telemetryTotalTime = document.getElementById("telemetry-total-time");
-const telemetryDenseTime = document.getElementById("telemetry-dense-time");
-const telemetryBm25Time = document.getElementById("telemetry-bm25-time");
-const telemetryRerankTime = document.getElementById("telemetry-rerank-time");
-const telemetryCandidates = document.getElementById("telemetry-candidates");
-
-// --- 3. Sidebar Collapse & Auto-Hide Management ---
+// --- 3. Sidebar Collapse & Auto-Hide Management (Step 4) ---
 function collapseSidebar() {
   if (appContainer) appContainer.classList.add("sidebar-collapsed");
   if (btnSidebarOpen) btnSidebarOpen.classList.remove("hidden");
@@ -95,12 +67,60 @@ function expandSidebar() {
   if (btnSidebarOpen) btnSidebarOpen.classList.add("hidden");
 }
 
+function toggleSidebarManual() {
+  if (appContainer.classList.contains("sidebar-collapsed")) {
+    expandSidebar();
+    localStorage.setItem("wb_sidebar_manual", "open");
+  } else {
+    collapseSidebar();
+    localStorage.setItem("wb_sidebar_manual", "collapsed");
+  }
+}
+
 if (btnSidebarToggle) {
-  btnSidebarToggle.addEventListener("click", collapseSidebar);
+  btnSidebarToggle.addEventListener("click", () => {
+    collapseSidebar();
+    localStorage.setItem("wb_sidebar_manual", "collapsed");
+  });
 }
 
 if (btnSidebarOpen) {
-  btnSidebarOpen.addEventListener("click", expandSidebar);
+  btnSidebarOpen.addEventListener("click", () => {
+    expandSidebar();
+    localStorage.setItem("wb_sidebar_manual", "open");
+  });
+}
+
+// Ctrl/Cmd+B Keyboard Shortcut to Toggle Sidebar (Step 4)
+window.addEventListener("keydown", (e) => {
+  if ((e.ctrlKey || e.metaKey) && (e.key === "b" || e.key === "B")) {
+    e.preventDefault();
+    toggleSidebarManual();
+  }
+  if (e.key === "Escape") {
+    if (guideModal && !guideModal.classList.contains("hidden")) {
+      guideModal.classList.add("hidden");
+    }
+  }
+});
+
+// Guide Modal Triggers (Step 3)
+if (btnToggleGuide) {
+  btnToggleGuide.addEventListener("click", () => {
+    if (guideModal) guideModal.classList.remove("hidden");
+  });
+}
+
+if (guideModalClose) {
+  guideModalClose.addEventListener("click", () => {
+    if (guideModal) guideModal.classList.add("hidden");
+  });
+}
+
+if (guideModal) {
+  guideModal.addEventListener("click", (e) => {
+    if (e.target === guideModal) guideModal.classList.add("hidden");
+  });
 }
 
 // --- 4. Tuning Preferences & Sliders State ---
@@ -371,19 +391,26 @@ function renderFileList() {
   });
 }
 
-// Ingestion Execution with Auto-Sidebar Collapse
+// Ingestion Execution with Single Thin Progress Bar & Smart Auto-Collapse (Step 4)
 async function triggerAutoIngest(filesToIngest) {
   const isPermanent = chkPermanent ? chkPermanent.checked : true;
 
+  // Reset manual override on new upload
+  localStorage.removeItem("wb_sidebar_manual");
+
   if (progressBox) progressBox.classList.remove("hidden");
-  if (stepExtract) stepExtract.className = "step-item active";
-  if (stepChunk) stepChunk.className = "step-item";
-  if (stepEmbed) stepEmbed.className = "step-item";
-  if (progressMsg) progressMsg.textContent = "Extracting document text...";
+  if (progressBarFill) {
+    progressBarFill.style.width = "25%";
+    progressBarFill.style.background = "var(--accent)";
+  }
+  if (progressMsg) {
+    progressMsg.textContent = "Extracting document text...";
+    progressMsg.style.color = "";
+  }
 
   if (chatStatusSubtitle) {
     chatStatusSubtitle.textContent = "Indexing documents in progress...";
-    chatStatusSubtitle.style.color = "var(--accent-warning)";
+    chatStatusSubtitle.style.color = "var(--accent)";
   }
 
   const formData = new FormData();
@@ -394,9 +421,9 @@ async function triggerAutoIngest(filesToIngest) {
   formData.append("chunk_overlap", TuningConfig.chunkOverlap);
 
   setTimeout(() => {
-    if (stepChunk) stepChunk.className = "step-item active";
+    if (progressBarFill) progressBarFill.style.width = "60%";
     if (progressMsg) progressMsg.textContent = `Chunking (${TuningConfig.chunkSize} chars)...`;
-    if (chatStatusSubtitle && progressBox && !progressBox.classList.contains("hidden")) {
+    if (chatStatusSubtitle) {
       chatStatusSubtitle.textContent = `Chunking text (${TuningConfig.chunkSize} chars)...`;
     }
   }, 400);
@@ -407,16 +434,22 @@ async function triggerAutoIngest(filesToIngest) {
       body: formData
     });
 
-    if (stepEmbed) stepEmbed.className = "step-item active";
-    if (progressMsg) progressMsg.textContent = "Embedding & Indexing vectors...";
+    if (progressBarFill) progressBarFill.style.width = "90%";
+    if (progressMsg) progressMsg.textContent = "Embedding & indexing vectors...";
     if (chatStatusSubtitle) {
       chatStatusSubtitle.textContent = "Embedding & indexing vectors...";
     }
 
     const data = await res.json();
-    if (progressBox) progressBox.classList.add("hidden");
 
     if (data.status === "success") {
+      if (progressBarFill) progressBarFill.style.width = "100%";
+      if (progressMsg) progressMsg.textContent = "Indexing complete!";
+
+      setTimeout(() => {
+        if (progressBox) progressBox.classList.add("hidden");
+      }, 500);
+
       if (statFiles) statFiles.textContent = data.files_count;
       if (statChunks) statChunks.textContent = data.chunks_count;
       if (statEngine) statEngine.textContent = data.mode === "supabase" ? "pgvector" : "Chroma";
@@ -430,7 +463,7 @@ async function triggerAutoIngest(filesToIngest) {
       // Auto-unlock chat interface
       enableChatInterface();
       if (chatStatusSubtitle) {
-        chatStatusSubtitle.textContent = `Indexed ${data.chunks_count} chunks • Ready with Nexus`;
+        chatStatusSubtitle.textContent = `Indexed ${data.chunks_count} chunks • Ready`;
         chatStatusSubtitle.style.color = "";
       }
 
@@ -438,25 +471,43 @@ async function triggerAutoIngest(filesToIngest) {
       if (guideContainer) guideContainer.classList.add("hidden");
       if (promptSuggestions) promptSuggestions.classList.remove("hidden");
 
-      // AUTO-COLLAPSE SIDEBAR: Once document upload and indexing is done!
+      // Auto-collapse smoothly after 800ms unless manually reopened (Step 4)
       setTimeout(() => {
-        collapseSidebar();
-      }, 700);
+        if (localStorage.getItem("wb_sidebar_manual") !== "open") {
+          collapseSidebar();
+        }
+        if (chatInput) chatInput.focus();
+      }, 800);
 
     } else {
+      // On failure: stay open with an inline error
+      if (progressBarFill) {
+        progressBarFill.style.width = "100%";
+        progressBarFill.style.background = "#ef4444";
+      }
+      if (progressMsg) {
+        progressMsg.textContent = "Indexing issue: " + (data.message || "Failed to process files.");
+        progressMsg.style.color = "#ef4444";
+      }
       if (chatStatusSubtitle) {
         chatStatusSubtitle.textContent = "Indexing encountered an issue";
         chatStatusSubtitle.style.color = "#ef4444";
       }
-      alert("Ingestion error: " + (data.message || "Failed to process files."));
     }
   } catch (err) {
-    if (progressBox) progressBox.classList.add("hidden");
+    // Stay open with inline error
+    if (progressBarFill) {
+      progressBarFill.style.width = "100%";
+      progressBarFill.style.background = "#ef4444";
+    }
+    if (progressMsg) {
+      progressMsg.textContent = "Network error during document ingestion.";
+      progressMsg.style.color = "#ef4444";
+    }
     if (chatStatusSubtitle) {
       chatStatusSubtitle.textContent = "Indexing failed. Please retry.";
       chatStatusSubtitle.style.color = "#ef4444";
     }
-    alert("Network error during document ingestion.");
   }
 }
 
@@ -888,8 +939,12 @@ function restoreSession() {
     if (guideContainer) guideContainer.classList.add("hidden");
     if (promptSuggestions) promptSuggestions.classList.remove("hidden");
 
-    // Keep collapsed on reload if already indexed
-    collapseSidebar();
+    // Honor manual user sidebar preference on reload
+    if (localStorage.getItem("wb_sidebar_manual") === "open") {
+      expandSidebar();
+    } else {
+      collapseSidebar();
+    }
   }
 
   const savedHistory = sessionStorage.getItem("wb_chat_history");
