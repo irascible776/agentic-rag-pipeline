@@ -817,3 +817,30 @@ function restoreSession() {
 // Initial Boot
 checkSystemConfig();
 restoreSession();
+
+// --- 13. Visual Theme Switcher ---
+const btnToggleTheme = document.getElementById("btn-toggle-theme");
+const themeIconSun = document.getElementById("theme-icon-sun");
+const themeIconMoon = document.getElementById("theme-icon-moon");
+
+function updateThemeUI(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  localStorage.setItem("wb_theme", theme);
+  if (theme === "light") {
+    if (themeIconSun) themeIconSun.classList.remove("hidden");
+    if (themeIconMoon) themeIconMoon.classList.add("hidden");
+  } else {
+    if (themeIconSun) themeIconSun.classList.add("hidden");
+    if (themeIconMoon) themeIconMoon.classList.remove("hidden");
+  }
+}
+
+if (btnToggleTheme) {
+  btnToggleTheme.addEventListener("click", () => {
+    const current = document.documentElement.getAttribute("data-theme") || "dark";
+    const next = current === "dark" ? "light" : "dark";
+    updateThemeUI(next);
+  });
+  const savedTheme = localStorage.getItem("wb_theme") || "dark";
+  updateThemeUI(savedTheme);
+}

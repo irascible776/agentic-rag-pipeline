@@ -158,7 +158,14 @@ def clear_endpoint(req: ClearRequest):
 # --- Static Frontend & Media Serving ---
 @app.get("/")
 def serve_home():
-    return FileResponse(static_dir / "index.html")
+    return FileResponse(
+        static_dir / "index.html",
+        headers={
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0",
+        },
+    )
 
 
 app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
