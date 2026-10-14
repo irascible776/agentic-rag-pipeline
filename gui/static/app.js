@@ -1,5 +1,5 @@
 // ==========================================================================
-// WORKBENCH CLIENT CONTROLLER: AUTO-ACTIVATION, TUNING & TELEMETRY
+// NEXUS CLIENT CONTROLLER: VISIONARY 2.0 WORKSPACE
 // ==========================================================================
 
 // --- 1. Session ID Management ---
@@ -14,6 +14,11 @@ let chatHistory = [];
 let pendingFiles = [];
 
 // --- 2. DOM Element Selectors ---
+const appContainer = document.getElementById("app-container");
+const sidebarPanel = document.getElementById("sidebar-panel");
+const btnSidebarToggle = document.getElementById("btn-sidebar-toggle");
+const btnSidebarOpen = document.getElementById("btn-sidebar-open");
+
 const statusDot = document.getElementById("status-dot");
 const storageStatusText = document.getElementById("storage-status-text");
 const sessionIdDisplay = document.getElementById("session-id-display");
@@ -79,8 +84,26 @@ const telemetryBm25Time = document.getElementById("telemetry-bm25-time");
 const telemetryRerankTime = document.getElementById("telemetry-rerank-time");
 const telemetryCandidates = document.getElementById("telemetry-candidates");
 
+// --- 3. Sidebar Collapse & Auto-Hide Management ---
+function collapseSidebar() {
+  if (appContainer) appContainer.classList.add("sidebar-collapsed");
+  if (btnSidebarOpen) btnSidebarOpen.classList.remove("hidden");
+}
 
-// --- 3. Tuning Preferences & Sliders State ---
+function expandSidebar() {
+  if (appContainer) appContainer.classList.remove("sidebar-collapsed");
+  if (btnSidebarOpen) btnSidebarOpen.classList.add("hidden");
+}
+
+if (btnSidebarToggle) {
+  btnSidebarToggle.addEventListener("click", collapseSidebar);
+}
+
+if (btnSidebarOpen) {
+  btnSidebarOpen.addEventListener("click", expandSidebar);
+}
+
+// --- 4. Tuning Preferences & Sliders State ---
 const TuningConfig = {
   chunkSize: parseInt(localStorage.getItem("wb_chunk_size")) || 1500,
   chunkOverlap: parseInt(localStorage.getItem("wb_chunk_overlap")) || 150,
@@ -101,19 +124,23 @@ const TuningConfig = {
   },
 
   syncUI() {
-    chunkSizeSlider.value = this.chunkSize;
-    valChunkSize.textContent = Number(this.chunkSize).toLocaleString();
-
-    chunkOverlapSlider.value = this.chunkOverlap;
-    valChunkOverlap.textContent = Number(this.chunkOverlap).toLocaleString();
-
-    retrieverKSlider.value = this.retrieverK;
-    valRetrieverK.textContent = this.retrieverK;
-
-    temperatureSlider.value = this.temperature;
-    valTemperature.textContent = this.temperature.toFixed(2);
-
-    modelSelect.value = this.model;
+    if (chunkSizeSlider && valChunkSize) {
+      chunkSizeSlider.value = this.chunkSize;
+      valChunkSize.textContent = Number(this.chunkSize).toLocaleString();
+    }
+    if (chunkOverlapSlider && valChunkOverlap) {
+      chunkOverlapSlider.value = this.chunkOverlap;
+      valChunkOverlap.textContent = Number(this.chunkOverlap).toLocaleString();
+    }
+    if (retrieverKSlider && valRetrieverK) {
+      retrieverKSlider.value = this.retrieverK;
+      valRetrieverK.textContent = this.retrieverK;
+    }
+    if (temperatureSlider && valTemperature) {
+      temperatureSlider.value = this.temperature;
+      valTemperature.textContent = this.temperature.toFixed(2);
+    }
+    if (modelSelect) modelSelect.value = this.model;
     if (chkHybrid) chkHybrid.checked = this.enableHybrid;
     if (chkReranker) chkReranker.checked = this.enableReranker;
   },
@@ -132,34 +159,44 @@ const TuningConfig = {
 };
 
 // Bind Slider Input Listeners
-chunkSizeSlider.addEventListener("input", (e) => {
-  TuningConfig.chunkSize = parseInt(e.target.value);
-  valChunkSize.textContent = Number(TuningConfig.chunkSize).toLocaleString();
-  TuningConfig.save();
-});
+if (chunkSizeSlider) {
+  chunkSizeSlider.addEventListener("input", (e) => {
+    TuningConfig.chunkSize = parseInt(e.target.value);
+    if (valChunkSize) valChunkSize.textContent = Number(TuningConfig.chunkSize).toLocaleString();
+    TuningConfig.save();
+  });
+}
 
-chunkOverlapSlider.addEventListener("input", (e) => {
-  TuningConfig.chunkOverlap = parseInt(e.target.value);
-  valChunkOverlap.textContent = Number(TuningConfig.chunkOverlap).toLocaleString();
-  TuningConfig.save();
-});
+if (chunkOverlapSlider) {
+  chunkOverlapSlider.addEventListener("input", (e) => {
+    TuningConfig.chunkOverlap = parseInt(e.target.value);
+    if (valChunkOverlap) valChunkOverlap.textContent = Number(TuningConfig.chunkOverlap).toLocaleString();
+    TuningConfig.save();
+  });
+}
 
-retrieverKSlider.addEventListener("input", (e) => {
-  TuningConfig.retrieverK = parseInt(e.target.value);
-  valRetrieverK.textContent = TuningConfig.retrieverK;
-  TuningConfig.save();
-});
+if (retrieverKSlider) {
+  retrieverKSlider.addEventListener("input", (e) => {
+    TuningConfig.retrieverK = parseInt(e.target.value);
+    if (valRetrieverK) valRetrieverK.textContent = TuningConfig.retrieverK;
+    TuningConfig.save();
+  });
+}
 
-temperatureSlider.addEventListener("input", (e) => {
-  TuningConfig.temperature = parseFloat(e.target.value);
-  valTemperature.textContent = TuningConfig.temperature.toFixed(2);
-  TuningConfig.save();
-});
+if (temperatureSlider) {
+  temperatureSlider.addEventListener("input", (e) => {
+    TuningConfig.temperature = parseFloat(e.target.value);
+    if (valTemperature) valTemperature.textContent = TuningConfig.temperature.toFixed(2);
+    TuningConfig.save();
+  });
+}
 
-modelSelect.addEventListener("change", (e) => {
-  TuningConfig.model = e.target.value;
-  TuningConfig.save();
-});
+if (modelSelect) {
+  modelSelect.addEventListener("change", (e) => {
+    TuningConfig.model = e.target.value;
+    TuningConfig.save();
+  });
+}
 
 if (chkHybrid) {
   chkHybrid.addEventListener("change", (e) => {
@@ -175,117 +212,118 @@ if (chkReranker) {
   });
 }
 
-btnResetTuning.addEventListener("click", () => TuningConfig.reset());
+if (btnResetTuning) {
+  btnResetTuning.addEventListener("click", () => TuningConfig.reset());
+}
 
-
-// --- 4. Drawer Toggle Logic ---
+// --- 5. Drawer Toggle Logic ---
 function openTuningDrawer() {
-  tuningDrawer.classList.remove("hidden");
-  drawerBackdrop.classList.remove("hidden");
+  if (tuningDrawer) tuningDrawer.classList.remove("hidden");
+  if (drawerBackdrop) drawerBackdrop.classList.remove("hidden");
 }
 
 function closeTuningDrawer() {
-  tuningDrawer.classList.add("hidden");
-  drawerBackdrop.classList.add("hidden");
+  if (tuningDrawer) tuningDrawer.classList.add("hidden");
+  if (drawerBackdrop) drawerBackdrop.classList.add("hidden");
 }
 
-btnOpenTuning.addEventListener("click", openTuningDrawer);
-btnCloseDrawer.addEventListener("click", closeTuningDrawer);
-btnSaveDrawer.addEventListener("click", closeTuningDrawer);
-drawerBackdrop.addEventListener("click", closeTuningDrawer);
+if (btnOpenTuning) btnOpenTuning.addEventListener("click", openTuningDrawer);
+if (btnCloseDrawer) btnCloseDrawer.addEventListener("click", closeTuningDrawer);
+if (btnSaveDrawer) btnSaveDrawer.addEventListener("click", closeTuningDrawer);
+if (drawerBackdrop) drawerBackdrop.addEventListener("click", closeTuningDrawer);
 
 window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && !tuningDrawer.classList.contains("hidden")) {
+  if (e.key === "Escape" && tuningDrawer && !tuningDrawer.classList.contains("hidden")) {
     closeTuningDrawer();
   }
 });
 
+// --- 6. Guide Toggle Logic ---
+if (btnToggleGuide) {
+  btnToggleGuide.addEventListener("click", () => {
+    if (guideContainer) {
+      if (guideContainer.classList.contains("hidden")) {
+        guideContainer.classList.remove("hidden");
+        messagesContainer.scrollTop = 0;
+      } else {
+        guideContainer.classList.add("hidden");
+      }
+    }
+  });
+}
 
-// --- 5. Guide Toggle Logic ---
-btnToggleGuide.addEventListener("click", () => {
-  if (guideContainer.classList.contains("hidden")) {
-    guideContainer.classList.remove("hidden");
-    messagesContainer.scrollTop = 0;
-  } else {
-    guideContainer.classList.add("hidden");
-  }
-});
+// --- 7. Session Copy Toast ---
+if (sessionIdDisplay) sessionIdDisplay.textContent = sessionId;
+if (sessionPill) {
+  sessionPill.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(sessionId);
+      const original = sessionIdDisplay.textContent;
+      sessionIdDisplay.textContent = "Copied!";
+      setTimeout(() => {
+        sessionIdDisplay.textContent = original;
+      }, 1500);
+    } catch (err) {}
+  });
+}
 
-
-// --- 6. Session Copy Toast ---
-sessionIdDisplay.textContent = sessionId;
-sessionPill.addEventListener("click", async () => {
-  try {
-    await navigator.clipboard.writeText(sessionId);
-    const original = sessionIdDisplay.textContent;
-    sessionIdDisplay.textContent = "Copied!";
-    setTimeout(() => {
-      sessionIdDisplay.textContent = original;
-    }, 1500);
-  } catch (err) {
-    // clipboard fallback
-  }
-});
-
-
-// --- 7. Initial System Config Check ---
+// --- 8. Initial System Config Check ---
 async function checkSystemConfig() {
   try {
     const res = await fetch("/api/config");
     const data = await res.json();
 
-    statusDot.classList.add("ready");
+    if (statusDot) statusDot.classList.add("ready");
     const isSupabase = data.mode === "supabase";
-    storageStatusText.textContent = isSupabase ? "Supabase pgvector" : "Local ChromaDB";
-    if (data.enable_hybrid_search && data.enable_reranker) {
-      corpusStatusBadge.textContent = isSupabase ? "Cloud (Hybrid+Rerank)" : "Local (Hybrid+Rerank)";
-    } else {
-      corpusStatusBadge.textContent = isSupabase ? "Cloud Ready" : "Local Ready";
+    if (storageStatusText) storageStatusText.textContent = isSupabase ? "Supabase pgvector" : "Local ChromaDB";
+    if (corpusStatusBadge) {
+      corpusStatusBadge.textContent = isSupabase ? "Hybrid + Re-Rank" : "Local Chroma";
     }
 
     if (telemetryStorage) {
-      telemetryStorage.textContent = isSupabase ? "🟢 Supabase Cloud" : "💻 Local ChromaDB";
+      telemetryStorage.textContent = isSupabase ? "🟢 Supabase pgvector" : "💻 Local ChromaDB";
     }
     if (telemetryEmbedding && data.embedding_model) {
       telemetryEmbedding.textContent = `${data.embedding_model}`;
     }
     if (statEngine) {
-      statEngine.textContent = isSupabase ? "Supabase" : "Chroma";
+      statEngine.textContent = isSupabase ? "pgvector" : "Chroma";
     }
   } catch (err) {
-    statusDot.classList.remove("ready");
-    storageStatusText.textContent = "Server Offline";
-    corpusStatusBadge.textContent = "Offline";
-    chatStatusSubtitle.textContent = "Backend connection unreachable";
+    if (statusDot) statusDot.classList.remove("ready");
+    if (storageStatusText) storageStatusText.textContent = "Server Offline";
+    if (corpusStatusBadge) corpusStatusBadge.textContent = "Offline";
+    if (chatStatusSubtitle) chatStatusSubtitle.textContent = "Backend connection unreachable";
   }
 }
 
+// --- 9. Drag & Drop and Instant Auto-Ingestion ---
+if (dropZone && fileInput) {
+  dropZone.addEventListener("click", () => fileInput.click());
 
-// --- 8. Drag & Drop and Instant Auto-Ingestion ---
-dropZone.addEventListener("click", () => fileInput.click());
+  dropZone.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropZone.classList.add("drag-over");
+  });
 
-dropZone.addEventListener("dragover", (e) => {
-  e.preventDefault();
-  dropZone.classList.add("drag-over");
-});
+  dropZone.addEventListener("dragleave", () => {
+    dropZone.classList.remove("drag-over");
+  });
 
-dropZone.addEventListener("dragleave", () => {
-  dropZone.classList.remove("drag-over");
-});
+  dropZone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropZone.classList.remove("drag-over");
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      handleIncomingFiles(e.dataTransfer.files);
+    }
+  });
 
-dropZone.addEventListener("drop", (e) => {
-  e.preventDefault();
-  dropZone.classList.remove("drag-over");
-  if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-    handleIncomingFiles(e.dataTransfer.files);
-  }
-});
-
-fileInput.addEventListener("change", () => {
-  if (fileInput.files && fileInput.files.length > 0) {
-    handleIncomingFiles(fileInput.files);
-  }
-});
+  fileInput.addEventListener("change", () => {
+    if (fileInput.files && fileInput.files.length > 0) {
+      handleIncomingFiles(fileInput.files);
+    }
+  });
+}
 
 function handleIncomingFiles(files) {
   const allowed = [".pdf", ".docx", ".txt", ".md"];
@@ -304,11 +342,11 @@ function handleIncomingFiles(files) {
   if (newValidFiles.length === 0) return;
 
   renderFileList();
-  // Automatically trigger processing! Zero redundant continue clicks
   triggerAutoIngest(newValidFiles);
 }
 
 function renderFileList() {
+  if (!fileList || !fileCount) return;
   fileList.innerHTML = "";
   fileCount.textContent = pendingFiles.length;
 
@@ -317,7 +355,7 @@ function renderFileList() {
     return;
   }
 
-  pendingFiles.forEach((file, idx) => {
+  pendingFiles.forEach((file) => {
     const li = document.createElement("li");
     li.className = "file-item";
     const ext = file.name.split(".").pop().toUpperCase();
@@ -333,17 +371,16 @@ function renderFileList() {
   });
 }
 
-// Ingestion Execution
+// Ingestion Execution with Auto-Sidebar Collapse
 async function triggerAutoIngest(filesToIngest) {
-  const isPermanent = chkPermanent.checked;
+  const isPermanent = chkPermanent ? chkPermanent.checked : true;
 
-  progressBox.classList.remove("hidden");
-  stepExtract.className = "step-item active";
-  stepChunk.className = "step-item";
-  stepEmbed.className = "step-item";
-  progressMsg.textContent = "Extracting document text...";
+  if (progressBox) progressBox.classList.remove("hidden");
+  if (stepExtract) stepExtract.className = "step-item active";
+  if (stepChunk) stepChunk.className = "step-item";
+  if (stepEmbed) stepEmbed.className = "step-item";
+  if (progressMsg) progressMsg.textContent = "Extracting document text...";
 
-  // Issue #9: Keep main canvas status synchronized with sidebar ingestion state
   if (chatStatusSubtitle) {
     chatStatusSubtitle.textContent = "Indexing documents in progress...";
     chatStatusSubtitle.style.color = "var(--accent-warning)";
@@ -356,10 +393,9 @@ async function triggerAutoIngest(filesToIngest) {
   formData.append("chunk_size", TuningConfig.chunkSize);
   formData.append("chunk_overlap", TuningConfig.chunkOverlap);
 
-  // Animate stepper transition
   setTimeout(() => {
-    stepChunk.className = "step-item active";
-    progressMsg.textContent = `Chunking (${TuningConfig.chunkSize} chars)...`;
+    if (stepChunk) stepChunk.className = "step-item active";
+    if (progressMsg) progressMsg.textContent = `Chunking (${TuningConfig.chunkSize} chars)...`;
     if (chatStatusSubtitle && progressBox && !progressBox.classList.contains("hidden")) {
       chatStatusSubtitle.textContent = `Chunking text (${TuningConfig.chunkSize} chars)...`;
     }
@@ -371,35 +407,41 @@ async function triggerAutoIngest(filesToIngest) {
       body: formData
     });
 
-    stepEmbed.className = "step-item active";
-    progressMsg.textContent = "Embedding & Indexing vectors...";
+    if (stepEmbed) stepEmbed.className = "step-item active";
+    if (progressMsg) progressMsg.textContent = "Embedding & Indexing vectors...";
     if (chatStatusSubtitle) {
       chatStatusSubtitle.textContent = "Embedding & indexing vectors...";
     }
 
     const data = await res.json();
-    progressBox.classList.add("hidden");
+    if (progressBox) progressBox.classList.add("hidden");
 
     if (data.status === "success") {
-      statFiles.textContent = data.files_count;
-      statChunks.textContent = data.chunks_count;
-      if (statEngine) statEngine.textContent = data.mode === "supabase" ? "Supabase" : "Chroma";
-      statsCard.classList.remove("hidden");
+      if (statFiles) statFiles.textContent = data.files_count;
+      if (statChunks) statChunks.textContent = data.chunks_count;
+      if (statEngine) statEngine.textContent = data.mode === "supabase" ? "pgvector" : "Chroma";
+      if (statsCard) statsCard.classList.remove("hidden");
 
-      // Save state to sessionStorage
       sessionStorage.setItem("wb_indexed", "true");
       sessionStorage.setItem("wb_files_count", String(data.files_count));
       sessionStorage.setItem("wb_chunks_count", String(data.chunks_count));
       sessionStorage.setItem("wb_mode", data.mode);
 
-      // Auto-unlock chat interface!
+      // Auto-unlock chat interface
       enableChatInterface();
-      chatStatusSubtitle.textContent = `Indexed ${data.chunks_count} chunks ready for questions`;
-      chatStatusSubtitle.style.color = "";
+      if (chatStatusSubtitle) {
+        chatStatusSubtitle.textContent = `Indexed ${data.chunks_count} chunks • Ready with Nexus`;
+        chatStatusSubtitle.style.color = "";
+      }
 
-      // Collapse guide if open, show prompt suggestions
+      // Hide guide, show prompt suggestions
       if (guideContainer) guideContainer.classList.add("hidden");
       if (promptSuggestions) promptSuggestions.classList.remove("hidden");
+
+      // AUTO-COLLAPSE SIDEBAR: Once document upload and indexing is done!
+      setTimeout(() => {
+        collapseSidebar();
+      }, 700);
 
     } else {
       if (chatStatusSubtitle) {
@@ -409,7 +451,7 @@ async function triggerAutoIngest(filesToIngest) {
       alert("Ingestion error: " + (data.message || "Failed to process files."));
     }
   } catch (err) {
-    progressBox.classList.add("hidden");
+    if (progressBox) progressBox.classList.add("hidden");
     if (chatStatusSubtitle) {
       chatStatusSubtitle.textContent = "Indexing failed. Please retry.";
       chatStatusSubtitle.style.color = "#ef4444";
@@ -419,26 +461,29 @@ async function triggerAutoIngest(filesToIngest) {
 }
 
 function enableChatInterface() {
-  chatInput.disabled = false;
-  btnSend.disabled = false;
-  chatInput.placeholder = "Ask a question about your documents... (Press Enter)";
-  chatInput.focus();
+  if (chatInput) {
+    chatInput.disabled = false;
+    chatInput.placeholder = "Describe what you'd like to query or ask Nexus... (Enter to send)";
+    chatInput.focus();
+  }
+  if (btnSend) btnSend.disabled = false;
 }
 
-
-// --- 9. Conversational Chat & Grounded Responses ---
+// --- 10. Conversational Chat & Grounded Responses ---
 async function handleSendMessage(overrideQuery = null) {
-  const query = (overrideQuery || chatInput.value).trim();
+  const query = (overrideQuery || (chatInput ? chatInput.value : "")).trim();
   if (!query) return;
 
-  chatInput.value = "";
-  chatInput.disabled = true;
-  btnSend.disabled = true;
+  if (chatInput) {
+    chatInput.value = "";
+    chatInput.disabled = true;
+  }
+  if (btnSend) btnSend.disabled = true;
 
-  // Append user row
+  // Append user bubble
   appendMessage("user", query);
 
-  // Append typing dots
+  // Append Nexus typing indicator
   const typingIndicator = appendTypingIndicator();
 
   try {
@@ -458,6 +503,7 @@ async function handleSendMessage(overrideQuery = null) {
     });
 
     const data = await res.json();
+
     if (typingIndicator && typingIndicator.parentNode) {
       typingIndicator.remove();
     }
@@ -473,7 +519,7 @@ async function handleSendMessage(overrideQuery = null) {
       });
       sessionStorage.setItem("wb_chat_history", JSON.stringify(chatHistory));
 
-      // Update live telemetry in drawer!
+      // Update live telemetry in drawer
       if (data.telemetry) {
         if (telemetryRetrievalTime) telemetryRetrievalTime.textContent = `${data.telemetry.retrieval_ms} ms`;
         if (telemetryGenerationTime) telemetryGenerationTime.textContent = `${data.telemetry.generation_ms} ms`;
@@ -492,30 +538,37 @@ async function handleSendMessage(overrideQuery = null) {
     }
     appendMessage("ai", "Connection error: Could not reach the server.");
   } finally {
-    chatInput.disabled = false;
-    btnSend.disabled = false;
-    chatInput.focus();
+    if (chatInput) {
+      chatInput.disabled = false;
+      chatInput.focus();
+    }
+    if (btnSend) btnSend.disabled = false;
   }
 }
 
 // Enter sends without newline (Shift+Enter adds newline)
-chatInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter" && !e.shiftKey) {
+if (chatInput) {
+  chatInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      e.stopPropagation();
+      handleSendMessage();
+    }
+  });
+}
+
+if (chatForm) {
+  chatForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    e.stopPropagation();
     handleSendMessage();
-  }
-});
+  });
+}
 
-chatForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  handleSendMessage();
-});
+if (btnSend) {
+  btnSend.addEventListener("click", () => handleSendMessage());
+}
 
-btnSend.addEventListener("click", () => handleSendMessage());
-
-
-// --- 10. Suggested Prompt Chips ---
+// --- 11. Suggested Prompt Chips ---
 document.querySelectorAll(".suggestion-chip").forEach(chip => {
   chip.addEventListener("click", () => {
     const prompt = chip.getAttribute("data-prompt");
@@ -525,130 +578,179 @@ document.querySelectorAll(".suggestion-chip").forEach(chip => {
   });
 });
 
+// --- 12. Clear Chat History ---
+if (btnClearChat) {
+  btnClearChat.addEventListener("click", () => {
+    chatHistory = [];
+    sessionStorage.removeItem("wb_chat_history");
+    
+    if (messagesContainer) {
+      messagesContainer.innerHTML = "";
+      const isIndexed = sessionStorage.getItem("wb_indexed") === "true";
+      if (!isIndexed && guideContainer) {
+        guideContainer.classList.remove("hidden");
+        messagesContainer.appendChild(guideContainer);
+      }
+    }
+  });
+}
 
-// --- 11. Clear Chat History ---
-btnClearChat.addEventListener("click", () => {
-  chatHistory = [];
-  sessionStorage.removeItem("wb_chat_history");
-  
-  // Clear messages but keep guide if no docs
-  messagesContainer.innerHTML = "";
-  const isIndexed = sessionStorage.getItem("wb_indexed") === "true";
-  if (!isIndexed && guideContainer) {
-    guideContainer.classList.remove("hidden");
-    messagesContainer.appendChild(guideContainer);
-  }
-});
+// --- 13. Dynamic Instagram Recency Gradient Updater ---
+function updateChatRecency() {
+  const userRows = document.querySelectorAll(".message-row.user");
+  const total = userRows.length;
+  userRows.forEach((row, idx) => {
+    row.classList.remove("recency-newest", "recency-recent", "recency-older");
+    const distFromEnd = total - 1 - idx;
+    if (distFromEnd === 0) {
+      row.classList.add("recency-newest"); // 1st newest (bottom)
+    } else if (distFromEnd <= 2) {
+      row.classList.add("recency-recent"); // 2nd & 3rd newest
+    } else {
+      row.classList.add("recency-older");  // older messages
+    }
+  });
+}
 
-
-// --- 12. Message Rendering & Utilities ---
+// --- 14. Message Rendering: Visionary 2.0 Avatars & Overlapping Citations ---
 function appendMessage(role, text, sources = [], media = []) {
+  if (!messagesContainer) return;
+
   const row = document.createElement("div");
   row.className = `message-row ${role}`;
 
-  const meta = document.createElement("div");
-  meta.className = "message-sender-meta";
-  meta.textContent = role === "user" ? "You" : "Workbench Assistant";
-  row.appendChild(meta);
+  if (role === "ai") {
+    // Left Avatar Badge for Nexus ("V" / "N")
+    const avatar = document.createElement("div");
+    avatar.className = "message-avatar ai-avatar";
+    avatar.textContent = "N";
+    row.appendChild(avatar);
 
-  const bubble = document.createElement("div");
-  bubble.className = "bubble";
-  bubble.innerHTML = formatMarkdown(text);
+    // Message Bubble
+    const bubble = document.createElement("div");
+    bubble.className = "bubble";
+    bubble.innerHTML = formatMarkdown(text);
 
-  // Citation pills
-  if (sources && sources.length > 0) {
-    const sourcesBox = document.createElement("div");
-    sourcesBox.className = "sources-box";
-    sourcesBox.innerHTML = '<span class="sources-label">Grounded Sources:</span>';
-    sources.forEach(src => {
-      const pill = document.createElement("span");
-      pill.className = "source-pill";
-      pill.textContent = src;
-      pill.title = `Passage retrieved from: ${src}`;
-      sourcesBox.appendChild(pill);
-    });
-    bubble.appendChild(sourcesBox);
-  }
+    // Citation Pills
+    if (sources && sources.length > 0) {
+      const sourcesBox = document.createElement("div");
+      sourcesBox.className = "sources-box";
+      sourcesBox.innerHTML = '<span class="sources-label">Grounded Sources:</span>';
+      sources.forEach(src => {
+        const pill = document.createElement("span");
+        pill.className = "source-pill";
+        pill.textContent = src;
+        pill.title = `Passage retrieved from: ${src}`;
+        sourcesBox.appendChild(pill);
+      });
+      bubble.appendChild(sourcesBox);
+    }
 
-  // Multi-Modal Visual Evidence Gallery (Level 2)
-  if (media && media.length > 0) {
-    const mediaGallery = document.createElement("div");
-    mediaGallery.className = "media-gallery";
-    mediaGallery.innerHTML = '<span class="media-gallery-label">Visual Figures & Evidence:</span>';
+    // Media Evidence (Overlapping Card Fan-Out Stack Style)
+    if (media && media.length > 0) {
+      const mediaGallery = document.createElement("div");
+      mediaGallery.className = "media-gallery";
+      mediaGallery.innerHTML = '<span class="media-gallery-label">Retrieved Evidence & Figures:</span>';
 
-    const mediaGrid = document.createElement("div");
-    mediaGrid.className = "media-grid";
+      const mediaGrid = document.createElement("div");
+      mediaGrid.className = "media-grid";
 
-    media.forEach(item => {
-      const card = document.createElement("div");
-      card.className = "media-card";
-      card.innerHTML = `
-        <div class="media-thumb-wrap">
-          <img src="${item.url}" alt="${item.caption || 'Figure'}" loading="lazy" class="media-thumb" />
-          <div class="media-zoom-overlay">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              <line x1="11" y1="8" x2="11" y2="14"></line>
-              <line x1="8" y1="11" x2="14" y2="11"></line>
-            </svg>
-            <span>Expand</span>
+      media.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "media-card";
+        card.innerHTML = `
+          <div class="media-thumb-wrap">
+            <img src="${item.url}" alt="${item.caption || 'Figure'}" loading="lazy" class="media-thumb" />
+            <div class="media-zoom-overlay">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                <line x1="11" y1="8" x2="11" y2="14"></line>
+                <line x1="8" y1="11" x2="14" y2="11"></line>
+              </svg>
+              <span>Expand</span>
+            </div>
           </div>
-        </div>
-        <div class="media-meta">
-          <span class="media-caption" title="${item.caption || ''}">${item.caption || 'Visual Asset'}</span>
-          <span class="media-source-tag">${item.source}${item.page ? ` (p.${item.page})` : ''}</span>
-        </div>
-      `;
+          <div class="media-meta">
+            <span class="media-caption" title="${item.caption || ''}">${item.caption || 'Visual Asset'}</span>
+            <span class="media-source-tag">${item.source}${item.page ? ` (p.${item.page})` : ''}</span>
+          </div>
+        `;
 
-      card.addEventListener("click", () => {
-        openLightbox(item.url, item.caption, item.source, item.page);
+        card.addEventListener("click", () => {
+          openLightbox(item.url, item.caption, item.source, item.page);
+        });
+
+        mediaGrid.appendChild(card);
       });
 
-      mediaGrid.appendChild(card);
-    });
+      mediaGallery.appendChild(mediaGrid);
+      bubble.appendChild(mediaGallery);
+    }
 
-    mediaGallery.appendChild(mediaGrid);
-    bubble.appendChild(mediaGallery);
-  }
+    row.appendChild(bubble);
 
-  row.appendChild(bubble);
-
-  // Micro-actions for AI responses (Copy Markdown)
-  if (role === "ai") {
+    // Inline Micro-Actions: Thumbs Up, Thumbs Down, Copy
     const actions = document.createElement("div");
     actions.className = "message-actions";
     
+    // Copy button
     const copyBtn = document.createElement("button");
-    copyBtn.className = "btn-msg-copy";
+    copyBtn.className = "msg-action-btn btn-msg-copy";
+    copyBtn.title = "Copy answer";
     copyBtn.innerHTML = `
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
       </svg>
-      <span>Copy</span>
     `;
     copyBtn.addEventListener("click", async () => {
       try {
         await navigator.clipboard.writeText(text);
-        copyBtn.innerHTML = `<span>✓ Copied</span>`;
-        setTimeout(() => {
-          copyBtn.innerHTML = `
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-            </svg>
-            <span>Copy</span>
-          `;
-        }, 1500);
+        copyBtn.classList.add("copied");
+        setTimeout(() => copyBtn.classList.remove("copied"), 1500);
       } catch (e) {}
     });
 
+    // Thumbs up / down feedback
+    const thumbUp = document.createElement("button");
+    thumbUp.className = "msg-action-btn";
+    thumbUp.title = "Helpful";
+    thumbUp.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>`;
+    thumbUp.addEventListener("click", () => thumbUp.classList.toggle("active"));
+
+    const thumbDown = document.createElement("button");
+    thumbDown.className = "msg-action-btn";
+    thumbDown.title = "Not helpful";
+    thumbDown.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"></path></svg>`;
+    thumbDown.addEventListener("click", () => thumbDown.classList.toggle("active"));
+
+    actions.appendChild(thumbUp);
+    actions.appendChild(thumbDown);
     actions.appendChild(copyBtn);
     row.appendChild(actions);
+
+  } else {
+    // User Message Bubble
+    const bubble = document.createElement("div");
+    bubble.className = "bubble";
+    bubble.innerHTML = formatMarkdown(text);
+    row.appendChild(bubble);
+
+    // User Avatar Badge on the right
+    const avatar = document.createElement("div");
+    avatar.className = "message-avatar user-avatar";
+    avatar.innerHTML = `
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+    `;
+    row.appendChild(avatar);
   }
 
   messagesContainer.appendChild(row);
+  updateChatRecency();
   messagesContainer.scrollTop = messagesContainer.scrollHeight;
   return row;
 }
@@ -691,24 +793,25 @@ function openLightbox(url, caption, source, page) {
 }
 
 function appendTypingIndicator() {
-  const row = document.createElement("div");
-  row.className = "message-row ai";
+  if (!messagesContainer) return;
 
-  const meta = document.createElement("div");
-  meta.className = "message-sender-meta";
-  meta.textContent = "Workbench Assistant";
-  row.appendChild(meta);
+  const row = document.createElement("div");
+  row.className = "message-row ai typing-row";
+
+  const avatar = document.createElement("div");
+  avatar.className = "message-avatar ai-avatar";
+  avatar.textContent = "N";
 
   const bubble = document.createElement("div");
-  bubble.className = "bubble";
+  bubble.className = "bubble typing-bubble";
   bubble.innerHTML = `
-    <div class="typing-dots">
-      <span class="dot"></span>
-      <span class="dot"></span>
-      <span class="dot"></span>
+    <div class="typing-status-wrap">
+      <span class="pulsing-spinner"></span>
+      <span class="typing-text">Nexus is reasoning & retrieving sources, please wait...</span>
     </div>
   `;
 
+  row.appendChild(avatar);
   row.appendChild(bubble);
   messagesContainer.appendChild(row);
   messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -724,13 +827,9 @@ function formatMarkdown(text) {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
 
-  // Inline code: `code`
   escaped = escaped.replace(/`([^`]+)`/g, '<code>$1</code>');
-
-  // Bold: **text**
   escaped = escaped.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 
-  // Split into paragraphs & list items
   const lines = escaped.split("\n");
   let html = "";
   let inList = false;
@@ -759,9 +858,7 @@ function formatMarkdown(text) {
   return html || "<p>" + escaped + "</p>";
 }
 
-
-// --- 13. Data Retention Lifecycle: Background Session Purge ---
-// If "Retain in Knowledge Base" is unchecked, silently clear session on tab close
+// --- 15. Data Retention Lifecycle: Background Session Purge ---
 window.addEventListener("beforeunload", () => {
   if (chkPermanent && !chkPermanent.checked) {
     const payload = JSON.stringify({ session_id: sessionId });
@@ -770,8 +867,7 @@ window.addEventListener("beforeunload", () => {
   }
 });
 
-
-// --- 14. Session Restoration on Page Reload ---
+// --- 16. Session Restoration on Page Reload ---
 function restoreSession() {
   TuningConfig.syncUI();
 
@@ -781,16 +877,19 @@ function restoreSession() {
     const chunksCount = sessionStorage.getItem("wb_chunks_count") || "0";
     const mode = sessionStorage.getItem("wb_mode") || "local";
 
-    statFiles.textContent = filesCount;
-    statChunks.textContent = chunksCount;
-    if (statEngine) statEngine.textContent = mode === "supabase" ? "Supabase" : "Chroma";
-    statsCard.classList.remove("hidden");
+    if (statFiles) statFiles.textContent = filesCount;
+    if (statChunks) statChunks.textContent = chunksCount;
+    if (statEngine) statEngine.textContent = mode === "supabase" ? "pgvector" : "Chroma";
+    if (statsCard) statsCard.classList.remove("hidden");
 
     enableChatInterface();
-    chatStatusSubtitle.textContent = `Indexed ${chunksCount} chunks ready for questions`;
+    if (chatStatusSubtitle) chatStatusSubtitle.textContent = `Indexed ${chunksCount} chunks • Ready with Nexus`;
 
     if (guideContainer) guideContainer.classList.add("hidden");
     if (promptSuggestions) promptSuggestions.classList.remove("hidden");
+
+    // Keep collapsed on reload if already indexed
+    collapseSidebar();
   }
 
   const savedHistory = sessionStorage.getItem("wb_chat_history");
@@ -818,7 +917,7 @@ function restoreSession() {
 checkSystemConfig();
 restoreSession();
 
-// --- 13. Visual Theme Switcher ---
+// --- 17. Visual Theme Switcher ---
 const btnToggleTheme = document.getElementById("btn-toggle-theme");
 const themeIconSun = document.getElementById("theme-icon-sun");
 const themeIconMoon = document.getElementById("theme-icon-moon");
