@@ -36,15 +36,11 @@
         </div>
       </div>
 
-      <!-- Header Center: Engine & Session Badges -->
+      <!-- Header Center: Engine Status Indicator (Issue #10) -->
       <div class="header-badges">
-        <div class="status-pill" id="storage-pill">
+        <div class="status-pill" id="storage-pill" title="Vector Engine Status">
           <span class="status-dot" id="status-dot"></span>
           <span id="storage-status-text">Detecting Engine...</span>
-        </div>
-        <div class="session-pill" id="session-pill" title="Click to copy Session ID">
-          <span class="session-label">Session:</span>
-          <code id="session-id-display">...</code>
         </div>
       </div>
 
@@ -131,7 +127,7 @@
         <!-- Uploaded Documents File List -->
         <div class="file-list-section">
           <div class="file-list-header">
-            <span class="section-label">Indexed Documents (<span id="file-count">0</span>)</span>
+            <span class="section-label">Indexed documents (<span id="file-count">0</span>)</span>
           </div>
           <ul class="file-list" id="file-list">
             <li class="empty-file-hint">No documents loaded yet. Drop files above to index automatically.</li>
@@ -166,20 +162,20 @@
       <!-- Right Main: Conversation Canvas & Grounded Chat -->
       <section class="canvas-panel">
         
-        <!-- Canvas Top Bar -->
+        <!-- Canvas Top Bar (Issue #13: Relocated Clear History inline beside title) -->
         <div class="canvas-header">
           <div class="canvas-info">
-            <h3>Interactive Assistant</h3>
-            <span class="canvas-sub" id="chat-status-subtitle">Awaiting document indexing</span>
-          </div>
-          <div class="canvas-actions">
-            <button id="btn-clear-chat" class="ghost-btn" type="button" title="Clear message history">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="3 6 5 6 21 6"></polyline>
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-              </svg>
-              <span>Clear History</span>
-            </button>
+            <div class="canvas-title-row">
+              <h3>Interactive Assistant</h3>
+              <button id="btn-clear-chat" class="ghost-btn btn-sm" type="button" title="Clear message history" aria-label="Clear conversation history">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+                <span>Clear</span>
+              </button>
+            </div>
+            <span class="canvas-sub" id="chat-status-subtitle" aria-live="polite">Awaiting document indexing</span>
           </div>
         </div>
 
@@ -217,32 +213,31 @@
                 </div>
               </div>
 
-              <!-- Card 2: Automatic Ingestion & Hybrid Search -->
+              <!-- Card 2: Automatic Ingestion & Hybrid Search (Issue #12) -->
               <div class="guide-card">
                 <div class="guide-card-icon">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
                   </svg>
                 </div>
-                <h3>2. Small-to-Big & Hybrid RRF</h3>
-                <p>Dense vector embeddings + Sparse BM25 keyword matching fused via Reciprocal Rank Fusion, linked to parent sections for deep context.</p>
+                <h3>2. Hybrid Semantic Search</h3>
+                <p>Combines keyword precision with AI vector search to retrieve relevant passages with full section context.</p>
                 <div class="guide-stat-hint">
-                  <span>Hybrid: <strong>Vector + BM25</strong></span>
-                  <span>Context: <strong>Parent (1200c)</strong></span>
+                  <span>Mode: <strong>Keyword + Vector</strong></span>
                 </div>
               </div>
 
-              <!-- Card 3: Grounded Answers & Re-Ranking -->
+              <!-- Card 3: Grounded Answers & Re-Ranking (Issue #12) -->
               <div class="guide-card">
                 <div class="guide-card-icon">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
                   </svg>
                 </div>
-                <h3>3. Re-Ranked Grounding</h3>
-                <p>FlashRank CPU cross-encoder pinpoints top passages. Embedded figures cited by the assistant appear below answers with modal zoom.</p>
+                <h3>3. Grounded Answers & Citations</h3>
+                <p>Answers are cross-checked and verified against your documents, complete with source citations and figures.</p>
                 <div class="guide-status-chip">
-                  <span class="ready-check">✓</span> <span>FlashRank Re-Ranking & Citations</span>
+                  <span class="ready-check">✓</span> <span>Verified Citations</span>
                 </div>
               </div>
 
@@ -320,6 +315,12 @@
       </div>
 
       <div class="drawer-body">
+        
+        <!-- Active Session Diagnostic Pill (Issue #10: Moved from header) -->
+        <div class="session-pill" id="session-pill" title="Click to copy Session ID" style="align-self: flex-start;">
+          <span class="session-label">Session:</span>
+          <code id="session-id-display">...</code>
+        </div>
         
         <!-- Section 1: Ingestion & Chunking -->
         <div class="tuning-section">

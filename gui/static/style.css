@@ -1,5 +1,5 @@
 /* ==========================================================================
-   WORKBENCH DESIGN SYSTEM: OBSIDIAN PRECISION
+   WORKBENCH DESIGN SYSTEM: STUDIO SLATE (MINIMALIST PRECISION)
    ========================================================================== */
 
 /* 1. Global Reset & Box Sizing */
@@ -10,41 +10,57 @@
 }
 
 :root {
-  /* Surface Luminance Scale (Obsidian Dark) */
-  --bg-canvas: #090a0f;
-  --bg-surface: #10131a;
-  --bg-card: #151922;
-  --bg-card-hover: #1b202c;
-  --bg-input: #0d1017;
+  /* Surface Scale (Studio Slate - Linear / Raycast Inspired) */
+  --bg-canvas: #0e1015;
+  --bg-surface: #14171f;
+  --bg-card: #1a1e28;
+  --bg-card-hover: #222735;
+  --bg-input: #11131a;
   
-  /* Borders & Dividers */
-  --border-subtle: #1e2433;
-  --border-hover: #2d354a;
-  --border-focus: #6366f1;
+  /* Crisp Hairline Borders */
+  --border-subtle: #242938;
+  --border-hover: #333a4f;
+  --border-focus: #3b82f6;
 
-  /* Typography */
-  --text-main: #ededed;
-  --text-muted: #8b949e;
-  --text-dim: #545d6e;
+  /* Typography Scale */
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* Restrained Accents */
-  --accent-emerald: #10b981;
-  --accent-emerald-dim: rgba(16, 185, 129, 0.12);
-  --accent-indigo: #6366f1;
-  --accent-indigo-dim: rgba(99, 102, 241, 0.14);
-  --accent-amber: #f59e0b;
-  --accent-amber-dim: rgba(245, 158, 11, 0.12);
-  --accent-cyan: #38bdf8;
-  --accent-cyan-dim: rgba(56, 189, 248, 0.12);
+  /* Restrained Functional Accents */
+  --accent-primary: #3b82f6;
+  --accent-primary-dim: rgba(59, 130, 246, 0.12);
+  --accent-success: #10b981;
+  --accent-success-dim: rgba(16, 185, 129, 0.12);
+  --accent-warning: #f59e0b;
+  --accent-warning-dim: rgba(245, 158, 11, 0.12);
+  --accent-info: #38bdf8;
+  --accent-info-dim: rgba(56, 189, 248, 0.12);
 
-  /* Radius & Shadows */
-  --radius-lg: 12px;
+  /* Semantic Theme Aliases */
+  --accent-indigo: var(--accent-primary);
+  --accent-indigo-dim: var(--accent-primary-dim);
+  --accent-emerald: var(--accent-success);
+  --accent-emerald-dim: var(--accent-success-dim);
+  --accent-amber: var(--accent-warning);
+  --accent-amber-dim: var(--accent-warning-dim);
+  --accent-cyan: var(--accent-info);
+  --accent-cyan-dim: var(--accent-info-dim);
+
+  /* Standardized Corner Radii System (Issue #1: Exactly 4 tokens) */
+  --radius-sm: 4px;
   --radius-md: 8px;
-  --radius-sm: 6px;
-  --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.35);
-  --shadow-drawer: -8px 0 32px rgba(0, 0, 0, 0.55);
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* Shadows (Subtle, Flat, Non-Glowing) */
+  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.25), 0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-drawer: -4px 0 24px rgba(0, 0, 0, 0.5);
+
+  /* Layout Gutter (Issue #14) */
+  --canvas-gutter: 28px;
 }
 
 body {
@@ -86,15 +102,15 @@ body {
 }
 
 .logo-mark {
-  width: 34px;
-  height: 34px;
+  width: 32px;
+  height: 32px;
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--accent-indigo);
+  color: var(--accent-primary);
 }
 
 .brand-title-row {
@@ -105,25 +121,29 @@ body {
 
 .brand-title-row h1 {
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--text-main);
 }
 
+/* Issue #3: Raised from 11px to 12px with WCAG compliance */
 .version-tag {
   font-family: var(--font-mono);
-  font-size: 0.68rem;
-  padding: 1px 6px;
-  border-radius: 4px;
-  background: var(--accent-indigo-dim);
-  color: #a5b4fc;
-  border: 1px solid rgba(99, 102, 241, 0.25);
+  font-size: 0.75rem;
+  line-height: 1rem;
+  padding: 2px 7px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-primary-dim);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.25);
 }
 
+/* Issue #4: Raised from 12px to 13px with accessible contrast */
 .brand-subtitle {
-  font-size: 0.74rem;
-  color: var(--text-dim);
-  line-height: 1.2;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+  margin-top: 1px;
 }
 
 /* Header Badges */
@@ -140,7 +160,7 @@ body {
   padding: 5px 12px;
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  border-radius: 20px;
+  border-radius: var(--radius-full);
   font-size: 0.76rem;
   color: var(--text-muted);
 }
@@ -154,8 +174,8 @@ body {
 }
 
 .status-dot.ready {
-  background: var(--accent-emerald);
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+  background: var(--accent-success);
+  box-shadow: none; /* Flat minimalist dot without neon halo */
 }
 
 .session-pill {
@@ -165,24 +185,25 @@ body {
   padding: 5px 12px;
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  border-radius: 20px;
+  border-radius: var(--radius-full);
   font-size: 0.76rem;
   color: var(--text-muted);
   cursor: pointer;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, background 0.2s;
 }
 
 .session-pill:hover {
   border-color: var(--border-hover);
+  background: var(--bg-card-hover);
 }
 
 .session-pill code {
   font-family: var(--font-mono);
   color: var(--text-main);
-  font-size: 0.74rem;
+  font-size: 0.75rem;
 }
 
-/* Header Action Buttons */
+/* Header Action Buttons (Issue #2: Standardized Buttons) */
 .header-actions {
   display: flex;
   align-items: center;
@@ -190,15 +211,17 @@ body {
 }
 
 .ghost-btn, .action-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   padding: 6px 12px;
-  border-radius: var(--radius-sm);
-  font-size: 0.78rem;
+  border-radius: var(--radius-md);
+  font-size: 0.8125rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.15s ease;
+  line-height: 1.2;
 }
 
 .ghost-btn {
@@ -225,7 +248,7 @@ body {
 }
 
 .action-btn svg {
-  color: var(--accent-indigo);
+  color: var(--accent-primary);
 }
 
 /* ==========================================================================
@@ -267,7 +290,7 @@ body {
   font-family: var(--font-mono);
   font-size: 0.68rem;
   padding: 2px 7px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   color: var(--accent-emerald);
@@ -316,8 +339,8 @@ body {
 }
 
 .drop-subtitle {
-  font-size: 0.72rem;
-  color: var(--text-dim);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
 }
 
 /* Retention Control (Toggle Switch) */
@@ -344,7 +367,7 @@ body {
   width: 32px;
   height: 18px;
   background: var(--border-hover);
-  border-radius: 10px;
+  border-radius: var(--radius-full);
   position: relative;
   transition: background 0.2s;
   flex-shrink: 0;
@@ -363,7 +386,7 @@ body {
 }
 
 .toggle-container input:checked + .toggle-switch {
-  background: var(--accent-indigo);
+  background: var(--accent-primary);
 }
 
 .toggle-container input:checked + .toggle-switch::after {
@@ -371,16 +394,17 @@ body {
 }
 
 .toggle-label {
-  font-size: 0.8rem;
+  font-size: 0.8125rem;
   font-weight: 500;
   color: var(--text-main);
 }
 
+/* Issue #6: Raised from 11px to 12px with accessible contrast */
 .retention-hint {
-  font-size: 0.7rem;
-  color: var(--text-dim);
+  font-size: 0.75rem;
+  color: var(--text-muted);
   margin-top: 5px;
-  line-height: 1.35;
+  line-height: 1.4;
 }
 
 /* Ingestion Progress Card */
@@ -408,7 +432,7 @@ body {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--accent-indigo);
+  background: var(--accent-primary);
   animation: pulseGlow 1.5s infinite;
 }
 
@@ -429,12 +453,12 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   color: var(--text-dim);
 }
 
 .step-item.active {
-  color: var(--accent-indigo);
+  color: var(--accent-primary);
   font-weight: 600;
 }
 
@@ -446,8 +470,8 @@ body {
 }
 
 .step-item.active .step-dot {
-  background: var(--accent-indigo);
-  box-shadow: 0 0 6px rgba(99, 102, 241, 0.6);
+  background: var(--accent-primary);
+  box-shadow: none;
 }
 
 /* Document File List */
@@ -459,12 +483,13 @@ body {
   min-height: 120px;
 }
 
+/* Issue #7: Removed uppercase, natural sentence case, readable weight */
 .section-label {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--text-dim);
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--text-muted);
   font-weight: 600;
 }
 
@@ -485,7 +510,7 @@ body {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
-  font-size: 0.78rem;
+  font-size: 0.8125rem;
   transition: border-color 0.15s;
 }
 
@@ -503,17 +528,17 @@ body {
 
 .file-ext-badge {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: 0.68rem;
   font-weight: 600;
   padding: 1px 5px;
-  border-radius: 3px;
-  background: var(--accent-indigo-dim);
-  color: #a5b4fc;
+  border-radius: var(--radius-sm);
+  background: var(--accent-primary-dim);
+  color: #93c5fd;
 }
 
 .file-size-tag {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   color: var(--text-dim);
 }
 
@@ -523,7 +548,7 @@ body {
   color: var(--text-dim);
   cursor: pointer;
   padding: 2px 4px;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   line-height: 1;
   font-size: 0.85rem;
 }
@@ -602,113 +627,129 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 28px;
+  padding: 14px var(--canvas-gutter);
   border-bottom: 1px solid var(--border-subtle);
-  background: rgba(16, 19, 26, 0.4);
+  background: var(--bg-surface);
 }
 
-.canvas-info h3 {
+.canvas-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.canvas-title-row h3 {
   font-size: 0.94rem;
   font-weight: 600;
   color: var(--text-main);
 }
 
 .canvas-sub {
-  font-size: 0.74rem;
-  color: var(--text-dim);
+  font-size: 0.78rem;
+  color: var(--text-muted);
 }
 
-/* Messages Container */
+.btn-sm {
+  padding: 3px 8px;
+  font-size: 0.75rem;
+}
+
+/* Messages Container - Issue #14: Unified horizontal gutter */
 .messages-container {
   flex: 1;
-  padding: 24px 32px;
+  padding: 16px var(--canvas-gutter);
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
   scroll-behavior: smooth;
 }
 
 /* ==========================================================================
-   5. Embedded 3-Card Guided Tutorial
+   5. Embedded 3-Card Guided Tutorial (Issue #8: Above the fold)
    ========================================================================== */
 
 .guide-wrapper {
-  margin: auto;
-  max-width: 860px;
+  margin: 0;
+  max-width: 900px;
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
   animation: fadeIn 0.3s ease;
 }
 
 .guide-header {
-  text-align: center;
+  text-align: left;
 }
 
 .guide-badge {
   display: inline-block;
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   padding: 2px 8px;
-  border-radius: 20px;
-  background: var(--accent-indigo-dim);
-  color: #a5b4fc;
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  margin-bottom: 8px;
+  border-radius: var(--radius-full);
+  background: var(--accent-primary-dim);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  margin-bottom: 6px;
 }
 
 .guide-header h2 {
-  font-size: 1.4rem;
-  font-weight: 700;
+  font-size: 1.15rem;
+  font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--text-main);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .guide-header p {
-  font-size: 0.84rem;
+  font-size: 0.8125rem;
   color: var(--text-muted);
 }
 
 .guide-cards-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  gap: 12px;
 }
 
 .guide-card {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  padding: 20px 18px;
+  padding: 14px 14px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   transition: all 0.2s ease;
 }
 
 .guide-card:hover {
   border-color: var(--border-hover);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   box-shadow: var(--shadow-subtle);
 }
 
 .guide-card-icon {
-  width: 42px;
-  height: 42px;
+  width: 32px;
+  height: 32px;
   border-radius: var(--radius-md);
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--accent-indigo);
+  color: var(--accent-primary);
+}
+
+.guide-card-icon svg {
+  width: 18px;
+  height: 18px;
 }
 
 .guide-card h3 {
-  font-size: 0.94rem;
+  font-size: 0.88rem;
   font-weight: 600;
   color: var(--text-main);
 }
@@ -716,7 +757,7 @@ body {
 .guide-card p {
   font-size: 0.78rem;
   color: var(--text-muted);
-  line-height: 1.45;
+  line-height: 1.4;
   flex: 1;
 }
 
@@ -724,22 +765,22 @@ body {
   font-family: var(--font-mono);
   background: var(--bg-input);
   padding: 1px 4px;
-  border-radius: 3px;
-  color: var(--accent-cyan);
+  border-radius: var(--radius-sm);
+  color: var(--accent-info);
   font-size: 0.75rem;
 }
 
 .guide-tags {
   display: flex;
   gap: 5px;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .file-pill {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: 0.68rem;
   padding: 2px 6px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   color: var(--text-muted);
@@ -748,10 +789,10 @@ body {
 .guide-stat-hint {
   display: flex;
   justify-content: space-between;
-  font-size: 0.7rem;
-  color: var(--text-dim);
+  font-size: 0.72rem;
+  color: var(--text-muted);
   background: var(--bg-card);
-  padding: 6px 8px;
+  padding: 5px 8px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-subtle);
 }
@@ -760,8 +801,8 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.7rem;
-  color: var(--accent-emerald);
+  font-size: 0.72rem;
+  color: var(--accent-success);
 }
 
 .ready-check {
@@ -769,11 +810,11 @@ body {
 }
 
 .guide-dismiss-row {
-  text-align: center;
+  text-align: left;
 }
 
 .guide-tip {
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   color: var(--text-dim);
   font-style: italic;
 }
@@ -823,17 +864,17 @@ body {
 }
 
 .message-row.user .bubble {
-  background: #1c2230;
-  border: 1px solid #2b344a;
+  background: #1e2433;
+  border: 1px solid #2e374d;
   color: #f1f5f9;
-  border-bottom-right-radius: 3px;
+  border-bottom-right-radius: var(--radius-sm);
 }
 
 .message-row.ai .bubble {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   color: var(--text-main);
-  border-bottom-left-radius: 3px;
+  border-bottom-left-radius: var(--radius-sm);
 }
 
 .bubble p {
@@ -856,9 +897,9 @@ body {
   font-family: var(--font-mono);
   background: var(--bg-input);
   padding: 2px 5px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   font-size: 0.82em;
-  color: var(--accent-cyan);
+  color: var(--accent-info);
 }
 
 .bubble strong {
@@ -889,17 +930,17 @@ body {
 .source-pill {
   font-family: var(--font-mono);
   padding: 2px 7px;
-  background: var(--accent-indigo-dim);
-  color: #a5b4fc;
-  border-radius: 4px;
-  border: 1px solid rgba(99, 102, 241, 0.25);
+  background: var(--accent-primary-dim);
+  color: #93c5fd;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(59, 130, 246, 0.25);
   font-size: 0.72rem;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .source-pill:hover {
-  background: rgba(99, 102, 241, 0.25);
+  background: rgba(59, 130, 246, 0.25);
   color: #ffffff;
 }
 
@@ -922,7 +963,7 @@ body {
   align-items: center;
   gap: 4px;
   padding: 2px 5px;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   transition: color 0.15s;
 }
 
@@ -955,47 +996,65 @@ body {
 }
 
 /* ==========================================================================
-   7. Prompt Suggestions & Chat Input Bar
+   7. Prompt Suggestions & Chat Input Bar (Issue #11 & #14)
    ========================================================================== */
 
 .prompt-suggestions {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 28px;
+  padding: 8px var(--canvas-gutter);
   overflow-x: auto;
   border-top: 1px solid var(--border-subtle);
   background: var(--bg-surface);
 }
 
 .suggestion-label {
-  font-size: 0.72rem;
-  color: var(--text-dim);
-  font-family: var(--font-mono);
-  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-weight: 500;
   flex-shrink: 0;
 }
 
+/* Issue #11: Elevated button affordance with icon & focus visible */
 .suggestion-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-muted);
-  padding: 4px 10px;
-  border-radius: 14px;
-  font-size: 0.76rem;
+  border: 1px solid var(--border-hover);
+  color: var(--text-main);
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.8125rem;
+  font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   transition: all 0.15s ease;
+}
+
+.suggestion-chip::before {
+  content: "✦";
+  color: var(--accent-primary);
+  font-size: 0.75rem;
 }
 
 .suggestion-chip:hover {
   background: var(--bg-card-hover);
-  color: var(--text-main);
-  border-color: var(--border-hover);
+  border-color: var(--accent-primary);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.suggestion-chip:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
 }
 
 .chat-input-bar {
-  padding: 14px 28px 18px;
+  padding: 12px var(--canvas-gutter) 16px;
   background: var(--bg-surface);
   border-top: 1px solid var(--border-subtle);
 }
@@ -1025,7 +1084,7 @@ body {
   font-size: 0.88rem;
   resize: none;
   max-height: 120px;
-  padding: 4px;
+  padding: 4px 6px;
   line-height: 1.45;
 }
 
@@ -1034,10 +1093,10 @@ body {
 }
 
 .send-btn {
-  background: var(--accent-indigo);
+  background: var(--accent-primary);
   color: #ffffff;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   width: 34px;
   height: 34px;
   display: flex;
@@ -1061,8 +1120,8 @@ body {
 
 .chat-footer-note {
   margin-top: 8px;
-  font-size: 0.7rem;
-  color: var(--text-dim);
+  font-size: 0.72rem;
+  color: var(--text-muted);
   text-align: center;
 }
 
@@ -1182,9 +1241,9 @@ body {
 
 .tuning-tag {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: 0.68rem;
   padding: 2px 6px;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   background: var(--bg-card);
   color: var(--text-dim);
   text-transform: none;
@@ -1226,7 +1285,7 @@ body {
 }
 
 .info-icon:hover, .info-icon:focus {
-  color: var(--accent-indigo);
+  color: var(--accent-primary);
 }
 
 .tooltip-popover {
@@ -1260,19 +1319,19 @@ input[type="range"] {
   -webkit-appearance: none;
   width: 100%;
   height: 5px;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   background: var(--border-hover);
   outline: none;
 }
 
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 15px;
-  height: 15px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
-  background: var(--accent-indigo);
+  background: var(--accent-primary);
   cursor: pointer;
-  box-shadow: 0 0 6px rgba(99, 102, 241, 0.5);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
   transition: transform 0.1s;
 }
 
@@ -1339,7 +1398,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 }
 
 .telemetry-val.highlight {
-  color: var(--accent-cyan);
+  color: var(--accent-info);
 }
 
 .drawer-footer {
@@ -1352,19 +1411,19 @@ input[type="range"]::-webkit-slider-thumb:hover {
 }
 
 .primary-action-btn {
-  background: var(--accent-indigo);
+  background: var(--accent-primary);
   color: #ffffff;
-  border: none;
-  padding: 8px 18px;
-  border-radius: var(--radius-sm);
-  font-size: 0.82rem;
-  font-weight: 600;
+  border: 1px solid transparent;
+  padding: 7px 16px;
+  border-radius: var(--radius-md);
+  font-size: 0.8125rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: opacity 0.15s;
+  transition: all 0.15s ease;
 }
 
 .primary-action-btn:hover {
-  opacity: 0.9;
+  background: #2563eb;
 }
 
 /* ==========================================================================
@@ -1382,7 +1441,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 ::-webkit-scrollbar-thumb {
   background: var(--border-hover);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
 }
 
 ::-webkit-scrollbar-thumb:hover {

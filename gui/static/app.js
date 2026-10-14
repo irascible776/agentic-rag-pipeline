@@ -343,6 +343,12 @@ async function triggerAutoIngest(filesToIngest) {
   stepEmbed.className = "step-item";
   progressMsg.textContent = "Extracting document text...";
 
+  // Issue #9: Keep main canvas status synchronized with sidebar ingestion state
+  if (chatStatusSubtitle) {
+    chatStatusSubtitle.textContent = "Indexing documents in progress...";
+    chatStatusSubtitle.style.color = "var(--accent-warning)";
+  }
+
   const formData = new FormData();
   filesToIngest.forEach(f => formData.append("files", f));
   formData.append("session_id", sessionId);
@@ -354,6 +360,9 @@ async function triggerAutoIngest(filesToIngest) {
   setTimeout(() => {
     stepChunk.className = "step-item active";
     progressMsg.textContent = `Chunking (${TuningConfig.chunkSize} chars)...`;
+    if (chatStatusSubtitle && progressBox && !progressBox.classList.contains("hidden")) {
+      chatStatusSubtitle.textContent = `Chunking text (${TuningConfig.chunkSize} chars)...`;
+    }
   }, 400);
 
   try {
@@ -364,6 +373,9 @@ async function triggerAutoIngest(filesToIngest) {
 
     stepEmbed.className = "step-item active";
     progressMsg.textContent = "Embedding & Indexing vectors...";
+    if (chatStatusSubtitle) {
+      chatStatusSubtitle.textContent = "Embedding & indexing vectors...";
+    }
 
     const data = await res.json();
     progressBox.classList.add("hidden");
@@ -383,16 +395,25 @@ async function triggerAutoIngest(filesToIngest) {
       // Auto-unlock chat interface!
       enableChatInterface();
       chatStatusSubtitle.textContent = `Indexed ${data.chunks_count} chunks ready for questions`;
+      chatStatusSubtitle.style.color = "";
 
       // Collapse guide if open, show prompt suggestions
       if (guideContainer) guideContainer.classList.add("hidden");
       if (promptSuggestions) promptSuggestions.classList.remove("hidden");
 
     } else {
+      if (chatStatusSubtitle) {
+        chatStatusSubtitle.textContent = "Indexing encountered an issue";
+        chatStatusSubtitle.style.color = "#ef4444";
+      }
       alert("Ingestion error: " + (data.message || "Failed to process files."));
     }
   } catch (err) {
     progressBox.classList.add("hidden");
+    if (chatStatusSubtitle) {
+      chatStatusSubtitle.textContent = "Indexing failed. Please retry.";
+      chatStatusSubtitle.style.color = "#ef4444";
+    }
     alert("Network error during document ingestion.");
   }
 }
