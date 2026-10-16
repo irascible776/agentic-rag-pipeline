@@ -56,6 +56,43 @@ const chatForm = document.getElementById("chat-form");
 const chatInput = document.getElementById("chat-input");
 const btnSend = document.getElementById("btn-send");
 
+// --- Tuning Drawer Controls ---
+const btnOpenTuning = document.getElementById("btn-open-tuning");
+const btnCloseDrawer = document.getElementById("btn-close-drawer");
+const btnSaveDrawer = document.getElementById("btn-save-drawer");
+const btnResetTuning = document.getElementById("btn-reset-tuning");
+const tuningDrawer = document.getElementById("tuning-drawer");
+const drawerBackdrop = document.getElementById("drawer-backdrop");
+
+// --- Tuning Sliders, Selects & Toggles ---
+const chunkSizeSlider = document.getElementById("chunk-size-slider");
+const valChunkSize = document.getElementById("val-chunk-size");
+const chunkOverlapSlider = document.getElementById("chunk-overlap-slider");
+const valChunkOverlap = document.getElementById("val-chunk-overlap");
+const retrieverKSlider = document.getElementById("retriever-k-slider");
+const valRetrieverK = document.getElementById("val-retriever-k");
+const temperatureSlider = document.getElementById("temperature-slider");
+const valTemperature = document.getElementById("val-temperature");
+const modelSelect = document.getElementById("model-select");
+const chkHybrid = document.getElementById("chk-hybrid");
+const chkReranker = document.getElementById("chk-reranker");
+
+// --- Telemetry Diagnostics Elements ---
+const telemetryStorage = document.getElementById("telemetry-storage");
+const telemetryEmbedding = document.getElementById("telemetry-embedding");
+const telemetryDenseTime = document.getElementById("telemetry-dense-time");
+const telemetryBm25Time = document.getElementById("telemetry-bm25-time");
+const telemetryRerankTime = document.getElementById("telemetry-rerank-time");
+const telemetryCandidates = document.getElementById("telemetry-candidates");
+const telemetryRetrievalTime = document.getElementById("telemetry-retrieval-time");
+const telemetryGenerationTime = document.getElementById("telemetry-generation-time");
+const telemetryTotalTime = document.getElementById("telemetry-total-time");
+
+// --- Visual Theme Controls ---
+const btnToggleTheme = document.getElementById("btn-toggle-theme");
+const themeIconSun = document.getElementById("theme-icon-sun");
+const themeIconMoon = document.getElementById("theme-icon-moon");
+
 // --- 3. Sidebar Collapse & Auto-Hide Management (Step 4) ---
 function collapseSidebar() {
   if (appContainer) appContainer.classList.add("sidebar-collapsed");
@@ -625,6 +662,21 @@ if (btnSend) {
 // --- 11. Suggested Prompt Chips ---
 document.querySelectorAll(".suggestion-chip").forEach(chip => {
   chip.addEventListener("click", () => {
+    if (chatInput && chatInput.disabled) {
+      if (chatStatusSubtitle) {
+        chatStatusSubtitle.textContent = "Upload documents in the sidebar first to query Nexus.";
+        chatStatusSubtitle.style.color = "var(--accent)";
+        setTimeout(() => {
+          chatStatusSubtitle.textContent = "Grounded on uploaded documents & vector store.";
+          chatStatusSubtitle.style.color = "";
+        }, 3000);
+      }
+      if (dropZone) {
+        dropZone.classList.add("drag-over");
+        setTimeout(() => dropZone.classList.remove("drag-over"), 1200);
+      }
+      return;
+    }
     const prompt = chip.getAttribute("data-prompt");
     if (prompt) {
       handleSendMessage(prompt);
@@ -976,10 +1028,6 @@ checkSystemConfig();
 restoreSession();
 
 // --- 17. Visual Theme Switcher ---
-const btnToggleTheme = document.getElementById("btn-toggle-theme");
-const themeIconSun = document.getElementById("theme-icon-sun");
-const themeIconMoon = document.getElementById("theme-icon-moon");
-
 function updateThemeUI(theme) {
   document.documentElement.setAttribute("data-theme", theme);
   localStorage.setItem("wb_theme", theme);
