@@ -517,7 +517,10 @@ function enableChatInterface() {
     chatInput.placeholder = "Describe what you'd like to query or ask Nexus... (Enter to send)";
     chatInput.focus();
   }
-  if (btnSend) btnSend.disabled = false;
+  if (btnSend) {
+    btnSend.disabled = false;
+    btnSend.title = "Send Question (Enter)";
+  }
 }
 
 // --- 10. Conversational Chat & Grounded Responses ---
